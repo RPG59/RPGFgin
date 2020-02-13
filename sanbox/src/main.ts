@@ -45,15 +45,15 @@ const _indices = new Uint16Array([
 const rpgf = new RPGF('canvas3d');
 gl.enable(gl.DEPTH_TEST);
 
-const texture = new Texture('10K_TEST.jpeg', 'test');
-texture.create().then(() => {
+// const texture = new Texture('10K_TEST.jpeg', 'test');
+// texture.create().then(() => {
 
-})
+// })
 
-fetch('test.obj').then(x => x.text()).then(x => {
+fetch('LP1.obj').then(x => x.text()).then(x => {
     const loader = new ObjLoader(x);
     const el = document.getElementById('run');
-    loader.parse();
+
     // el.addEventListener('click', () => {
     //     console.log('debug');
     //     //@ts-ignore
@@ -69,11 +69,15 @@ fetch('test.obj').then(x => x.text()).then(x => {
     const shader = new Shader(VS, FS);
     const porj = new float4x4().perspective(Math.PI / 2, 1024. / 768., 0.1, 100.);
 
-    const model = new float4x4().scale(.2, .2, .2);
+    const model = new float4x4().scale(.4, .4, .4);
+
     // const info = objDoc.getDrawingInfo();
     console.log(loader);
-    
-    const mesh = new Mesh(new Float32Array(loader.vertices), new Uint16Array(loader.objects[0].indices), []);
+
+    const meshes = [];
+    loader.objects.forEach(obj => {
+        meshes.push(new Mesh(new Float32Array(loader.vertices), new Uint16Array(obj.indices), []));
+    })
     shader.enable();
 
     setInterval(() => {
@@ -85,7 +89,7 @@ fetch('test.obj').then(x => x.text()).then(x => {
         const t = Date.now() / 1000;
         const c = Math.cos(t);
         const s = Math.sin(t);
-        const cp = [2 * c, 1, 2 * s];
+        const cp = [2 * c, -3, 2 * s];
         const view = new float4x4().lookAt(cp, [0, 0, 0], [0, 1, 0]);
 
 
@@ -97,7 +101,10 @@ fetch('test.obj').then(x => x.text()).then(x => {
 
         // const mesh = new Mesh(_vertices, _indices, []);
         // @ts-ignore
-        mesh.draw(shader);
+        // meshes.forEach(mesh => {
+        //     mesh.draw(shader);
+        // })
+        meshes[3].draw();
 
     }, 33);
 

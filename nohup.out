@@ -696,3 +696,181 @@ Fontconfig error: Cannot load default config file
 [21784:21817:0208/212101.207744:ERROR:socket_stream.cc(218)] Closing stream with result -2
 [21784:21817:0208/212146.480504:ERROR:socket_stream.cc(218)] Closing stream with result -2
 [21784:21817:0208/212231.754012:ERROR:socket_stream.cc(218)] Closing stream with result -2
+OpenJDK 64-Bit Server VM warning: Option UseConcMarkSweepGC was deprecated in version 9.0 and will likely be removed in a future release.
+2020-02-12 17:44:46,783 [   5843]   WARN - com.intellij.util.xmlb.Binding - no accessors for class com.intellij.execution.configuration.EnvironmentVariablesData 
+2020-02-12 18:48:42,674 [3841734]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:48:42,738 [3841798]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:48:47,872 [3846932]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:48:47,873 [3846933]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;source 
+2020-02-12 18:48:47,891 [3846951]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:48:47,952 [3847012]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:49:19,360 [3878420]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:49:19,361 [3878421]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;history|grep 
+2020-02-12 18:49:19,381 [3878441]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:49:19,481 [3878541]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:49:27,676 [3886736]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:49:27,677 [3886737]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;history|grep 
+2020-02-12 18:49:27,694 [3886754]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:49:27,797 [3886857]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:49:32,594 [3891654]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:49:32,595 [3891655]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;history|grep 
+2020-02-12 18:49:32,648 [3891708]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:49:32,691 [3891751]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:50:04,970 [3924030]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:50:04,971 [3924031]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:50:05,057 [3924117]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:50:05,764 [3924824]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:50:05,765 [3924825]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:50:05,868 [3924928]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:50:05,932 [3924992]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:50:05,932 [3924992]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:50:06,023 [3925083]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:50:14,071 [3933131]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:50:14,073 [3933133]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:50:14,182 [3933242]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:50:41,765 [3960825]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:50:41,766 [3960826]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 18:51:05,222 [3984282]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:51:05,266 [3984326]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:51:08,439 [3987499]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:51:08,440 [3987500]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;history|grep 
+2020-02-12 18:51:08,476 [3987536]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:51:08,533 [3987593]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 18:51:25,954 [4005014]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 18:51:25,961 [4005021]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 18:51:26,714 [4005774]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 18:51:26,759 [4005819]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:29:23,902 [6282962]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:29:23,909 [6282969]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:29:44,762 [6303822]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:29:44,809 [6303869]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:29:49,300 [6308360]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:29:49,300 [6308360]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:29:50,074 [6309134]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:29:50,117 [6309177]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:38:39,930 [6838990]   WARN - com.intellij.util.xmlb.Binding - no accessors for class com.intellij.execution.configuration.EnvironmentVariablesData 
+2020-02-12 19:39:01,077 [6860137]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:39:01,078 [6860138]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:39:21,677 [6880737]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:39:21,720 [6880780]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:39:25,616 [6884676]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:39:25,617 [6884677]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:39:26,319 [6885379]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:39:26,374 [6885434]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:40:44,256 [6963316]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:40:44,257 [6963317]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:41:04,935 [6983995]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:41:04,978 [6984038]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:41:08,571 [6987631]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:41:08,572 [6987632]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:41:09,264 [6988324]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:41:09,306 [6988366]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:42:48,724 [7087784]   WARN - com.intellij.util.xmlb.Binding - no accessors for class com.intellij.execution.configuration.EnvironmentVariablesData 
+2020-02-12 19:42:52,336 [7091396]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:42:52,336 [7091396]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:42:53,056 [7092116]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:42:53,102 [7092162]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:42:54,932 [7093992]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:42:54,933 [7093993]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:43:19,120 [7118180]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:43:19,162 [7118222]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+2020-02-12 19:43:22,878 [7121938]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004l
+bytes read                    :ESC[ 
+2020-02-12 19:43:22,879 [7121939]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;pybabel 
+2020-02-12 19:43:23,605 [7122665]  ERROR - terminal.emulator.JediEmulator - Error processing OSC 1;..k/biganto.com 
+2020-02-12 19:43:23,648 [7122708]  ERROR - terminal.emulator.JediEmulator - Unhandled Control sequence
+parsed                        :ESC[?2004h
+bytes read                    :ESC[ 
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007ffb904265b4, pid=29261, tid=14356
+#
+# JRE version: OpenJDK Runtime Environment (11.0.5+10) (build 11.0.5+10-b520.30)
+# Java VM: OpenJDK 64-Bit Server VM (11.0.5+10-b520.30, mixed mode, tiered, compressed oops, concurrent mark sweep gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x25b4]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x74
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %e" (or dumping to /home/rpg59/dev/web/RPGFgin/core.29261)
+#
+# An error report file with more information is saved as:
+# /home/rpg59/java_error_in_WEBIDE_29261.log

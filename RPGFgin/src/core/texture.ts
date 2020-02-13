@@ -26,3 +26,24 @@ export class Texture {
         })
     }
 }
+
+async function foo() {
+    return new Promise(res => {
+        setTimeout(() => {
+            console.log('foo');
+            res()
+        }, 1000);
+    })
+}
+
+async function bar_1() {
+    await foo();
+    await foo();
+    console.log('end');
+}
+
+function bar_2() {
+    foo().then();
+    foo().then();
+    console.log('end');
+}

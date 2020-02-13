@@ -3,7 +3,6 @@ import { Mesh } from "../core/mesh";
 // Mesh[]
 
 export class ObjLoader {
-    data: string;
     meshes: Mesh[] = [];
     objects: Object3D[] = [];
     mtllib: string[] = [];
@@ -12,25 +11,29 @@ export class ObjLoader {
     texCoord: number[] = [];
     normals: number[] = [];
     indices: number[] = [];
+    currentObject: Object3D;
 
     constructor(data: string) {
-        this.data = data;
+        this.parse(data);
     }
 
-    // load(): Promise<void> {
-
+    // loadMTL(): Promise<void> {
     // }
 
-    parse(): void {
-        const lines = this.data.split('\n')
+    parse(data): void {
+        console.log('START PARSING .obj');
+
+        const lines = data.split('\n')
         lines.push(null);
         let line = '';
         let i = 0;
 
-
         while ((line = lines[i++]) !== null) {
             line = line.trim();
             const command = this.getCommand(line);
+            if (!(i % 1000)) {
+                console.log(i + ' / ', lines.length);
+            }
 
             switch (command) {
                 case '#':
@@ -67,7 +70,9 @@ export class ObjLoader {
     }
 
     parseVetices(line: string): void {
-        this.vertices = this.vertices.concat(line.replace('v', '').split(/\s+/).map(x => Number(x)));
+        line.substr(1).trim().split(/\s+/).forEach(x => this.vertices.push(+x));
+
+        // this.vertices = this.vertices.concat(line.replace('v', '').trim().split(/\s+/).map(x => Number(x)));
     }
 
     parseNormals(line: string): void {
@@ -75,21 +80,45 @@ export class ObjLoader {
     }
 
     parseUsemtl(line: string): void {
-        this.objects[this.objects.length - 1].usemtl = line.split(' ')[1];
+        this.currentObject.usemtl = line.split(' ')[1];
     }
 
     parseFaces(line: string): void {
-        const arr = line.replace('f ', '').split(/\s+/);
-        for (let i = 0; i < arr.length; ++i) {
-            const face = arr[i].split('/').map(Number);
-            this.objects[this.objects.length - 1].indices.push(face[0] - 1);
+        const arr = line.substr(1).trim().split(/\s+/);
+        const len = arr.length;
+        const face = [];
+        for (let i = 0; i < len; ++i) {
+            const item = arr[i].split('/').map(Number);
+            face.push(item[0] - 1);
+        }
+
+        if (arr.length > 3) {
+            const newIndexes = [];
+            for (let i = 2; i < face.length; ++i) {
+                newIndexes.push(face[0]);
+                newIndexes.push(face[i - 1]);
+                newIndexes.push(face[i]);
+
+            }
+            this.currentObject.indices = this.currentObject.indices.concat(newIndexes);
+        } else {
+            face.forEach(f => {
+                this.currentObject.indices.push(f);
+            })
+            // this.currentObject.indices = this.currentObject.indices.concat(face);
         }
 
     }
 
     parseObjectName(line: string): void {
         const name = line.split(' ')[1];
-        this.objects.push(new Object3D(name));
+
+        if (this.currentObject) {
+            this.objects.push(this.currentObject);
+        }
+
+        this.currentObject = new Object3D(name);
+
     }
 
     parseMtllib(line: string): void {
