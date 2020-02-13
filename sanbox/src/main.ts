@@ -1,5 +1,4 @@
 import { RPGF, gl } from "../../RPGFgin/src/main";
-import { OBJDoc } from "../../RPGFgin/src/loaders/objLOader";
 import { Mesh } from "../../RPGFgin/src/core/mesh";
 import { Shader } from "../../RPGFgin/src/core/shader";
 import { float4x4 } from "../../RPGFgin/src/math/float4x4";
@@ -9,6 +8,7 @@ import { Texture } from "../../RPGFgin/src/core/texture";
 import FS from '../../RPGFgin/shaders/default.frag';
 //@ts-ignore
 import VS from '../../RPGFgin/shaders/default.vert';
+import { ObjLoader } from "../../RPGFgin/src/loaders/objLoader";
 
 const _vertices = new Float32Array([
     -0.5, -0.5, 0.5,
@@ -50,16 +50,30 @@ texture.create().then(() => {
 
 })
 
-fetch('LP1.obj').then(x => x.text()).then(x => {
-    const objDoc = new OBJDoc('test');
-    const res = objDoc.parse(x, 1, true);
+fetch('test.obj').then(x => x.text()).then(x => {
+    const loader = new ObjLoader(x);
+    const el = document.getElementById('run');
+    loader.parse();
+    // el.addEventListener('click', () => {
+    //     console.log('debug');
+    //     //@ts-ignore
+    //     window.IS_RUN = true;
+    //     loader.parse();
+    //     console.log(loader);
+
+    // })
+
+
+    // const objDoc = new OBJDoc('test');
+    // const res = objDoc.parse(x, 1, true);
     const shader = new Shader(VS, FS);
     const porj = new float4x4().perspective(Math.PI / 2, 1024. / 768., 0.1, 100.);
-    console.log(porj);
-    
+
     const model = new float4x4().scale(.2, .2, .2);
-    const info = objDoc.getDrawingInfo();
-    const mesh = new Mesh(info.vertices, info.indices, []);
+    // const info = objDoc.getDrawingInfo();
+    console.log(loader);
+    
+    const mesh = new Mesh(new Float32Array(loader.vertices), new Uint16Array(loader.objects[0].indices), []);
     shader.enable();
 
     setInterval(() => {
@@ -88,12 +102,3 @@ fetch('LP1.obj').then(x => x.text()).then(x => {
     }, 33);
 
 });
-
-const el = document.getElementById('run');
-el.addEventListener('click', () => {
-    //@ts-ignore
-    window.IS_RUN = true;
-    console.log('debug');
-    
-})
-
