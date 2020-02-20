@@ -1,5 +1,5 @@
 import { RPGF, gl } from "../../RPGFgin/src/main";
-import { Mesh } from "../../RPGFgin/src/core/mesh";
+import { Mesh, TEXTURE_TYPES } from "../../RPGFgin/src/core/mesh";
 import { Shader } from "../../RPGFgin/src/core/shader";
 import { float4x4 } from "../../RPGFgin/src/math/float4x4";
 import { Texture } from "../../RPGFgin/src/core/texture";
@@ -75,37 +75,56 @@ fetch('LP1.obj').then(x => x.text()).then(x => {
     console.log(loader);
 
     const meshes = [];
-    loader.objects.forEach(obj => {
-        meshes.push(new Mesh(new Float32Array(loader.vertices), new Uint16Array(obj.indices), []));
-    })
+
     shader.enable();
 
-    setInterval(() => {
-        //@ts-ignore
-        // if(!window.IS_RUN) return;
+    loader.objects.forEach(obj => {
+        meshes.push(new Mesh(new Float32Array(loader.vertices), new Float32Array(loader.texCoord), new Uint16Array(obj.indices), [_texture]));
+    });
 
-        gl.clearColor(1, 1, 1, 1)
-        gl.clear(gl.COLOR_BUFFER_BIT);
-        const t = Date.now() / 1000;
-        const c = Math.cos(t);
-        const s = Math.sin(t);
-        const cp = [2 * c, -3, 2 * s];
-        const view = new float4x4().lookAt(cp, [0, 0, 0], [0, 1, 0]);
+    gl.activeTexture(gl.TEXTURE1)
+    const _texture = new Texture('6.jpg', TEXTURE_TYPES.DIFFUSE);
+    _texture.create().then(() => {
+        render()
+    });
 
-
-        shader.setUniformMatrix4f('u_projMatrix', porj.elements);
-        shader.setUniformMatrix4f('u_viewMatrix', view.elements);
-        shader.setUniformMatrix4f('u_modelMatrix', model.elements);
-        //console.log(objDoc.isMTLComplete());
+    ///
 
 
-        // const mesh = new Mesh(_vertices, _indices, []);
-        // @ts-ignore
-        // meshes.forEach(mesh => {
-        //     mesh.draw(shader);
-        // })
-        meshes[3].draw();
 
-    }, 33);
+    function render() {
+        const texLocation = gl.getUniformLocation(shader.program, '_tex');
+
+        gl.uniform1i(texLocation, 1);
+
+        setInterval(() => {
+            //@ts-ignore
+            // if(!window.IS_RUN) return;
+
+            gl.clearColor(1, 1, 1, 1)
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            const t = Date.now() / 1000;
+            const c = Math.cos(t);
+            const s = Math.sin(t);
+            const cp = [2 * c, -3, 2 * s];
+            const view = new float4x4().lookAt(cp, [0, 0, 0], [0, 1, 0]);
+
+
+            shader.setUniformMatrix4f('u_projMatrix', porj.elements);
+            shader.setUniformMatrix4f('u_viewMatrix', view.elements);
+            shader.setUniformMatrix4f('u_modelMatrix', model.elements);
+            //console.log(objDoc.isMTLComplete());
+
+
+            // const mesh = new Mesh(_vertices, _indices, []);
+            // @ts-ignore
+            // meshes.forEach(mesh => {
+            //     mesh.draw(shader);
+            // })
+            meshes[3].draw();
+
+        }, 33);
+    }
+
 
 });

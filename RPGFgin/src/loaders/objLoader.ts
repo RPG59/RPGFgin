@@ -48,6 +48,9 @@ export class ObjLoader {
                 case 'v':
                     this.parseVetices(line);
                     continue;
+                case 'vt':
+                    this.parseTextureCoords(line);
+                    continue;
                 case 'vn':
                     this.parseNormals(line);
                     continue;
@@ -123,6 +126,10 @@ export class ObjLoader {
 
     parseMtllib(line: string): void {
         this.mtllib.push(line.split(' ')[1]);
+    }
+
+    parseTextureCoords(line: string): void {
+        line.substr(2).trim().split(/\s+/).forEach(x => this.texCoord.push(+x));
     }
 
 }
