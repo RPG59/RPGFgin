@@ -7,8 +7,8 @@ export class ObjLoader {
     objects: Object3D[] = [];
     mtllib: string[] = [];
     usemtl: string[] = [];
-    vertices: number[] = [];
-    texCoord: number[] = [];
+    vertices: { x: number, y: number, z: number }[] = [];
+    texCoord: { x: number, y: number }[] = [];
     normals: number[] = [];
     indices: number[] = [];
     currentObject: Object3D;
@@ -73,7 +73,13 @@ export class ObjLoader {
     }
 
     parseVetices(line: string): void {
-        line.substr(1).trim().split(/\s+/).forEach(x => this.vertices.push(+x));
+        const data = line.substr(1).trim().split(/\s+/);
+        const v = {
+            x: +data[0],
+            y: +data[1],
+            z: +data[2]
+        }
+        this.vertices.push(v);
 
         // this.vertices = this.vertices.concat(line.replace('v', '').trim().split(/\s+/).map(x => Number(x)));
     }
@@ -90,24 +96,35 @@ export class ObjLoader {
         const arr = line.substr(1).trim().split(/\s+/);
         const len = arr.length;
         const face = [];
+        const tex = [];
+
         for (let i = 0; i < len; ++i) {
             const item = arr[i].split('/').map(Number);
             face.push(item[0] - 1);
+            tex.push(item[1]);
         }
 
         if (arr.length > 3) {
             const newIndexes = [];
+            const newTex = [];
             for (let i = 2; i < face.length; ++i) {
                 newIndexes.push(face[0]);
                 newIndexes.push(face[i - 1]);
                 newIndexes.push(face[i]);
 
+                newTex.push(tex[0]);
+                newTex.push(tex[i - 1]);
+                newTex.push(tex[i]);
             }
             this.currentObject.indices = this.currentObject.indices.concat(newIndexes);
+            this.currentObject.texIndeces = this.currentObject.texIndeces.concat(newTex);
         } else {
             face.forEach(f => {
                 this.currentObject.indices.push(f);
-            })
+            });
+            tex.forEach(t => {
+                this.currentObject.texIndeces.push(t);
+            });
             // this.currentObject.indices = this.currentObject.indices.concat(face);
         }
 
@@ -129,7 +146,12 @@ export class ObjLoader {
     }
 
     parseTextureCoords(line: string): void {
-        line.substr(2).trim().split(/\s+/).forEach(x => this.texCoord.push(+x));
+        const data = line.substr(2).trim().split(/\s+/);
+        const vt = {
+            x: +data[0],
+            y: +data[1]
+        }
+        this.texCoord.push(vt);
     }
 
 }
@@ -138,6 +160,7 @@ class Object3D {
     name: string;
     indices: number[] = [];
     usemtl: string;
+    texIndeces: number[] = [];
     constructor(name: string) {
         this.name = name;
     }

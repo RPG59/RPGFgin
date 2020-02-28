@@ -35,7 +35,6 @@ export class Mesh {
         this.VAO = gl.createVertexArray();
         gl.bindVertexArray(this.VAO);
         this.VBO = new StaticVerticesBuffer(this.vertices);
-        this.EBO = new StaticIndexBuffer(this.indices);
 
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, null); // Positions
@@ -44,6 +43,7 @@ export class Mesh {
         gl.enableVertexAttribArray(2);
         gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, null);
 
+        this.EBO = new StaticIndexBuffer(this.indices);
         // gl.enableVertexAttribArray(1);
         // gl.vertexAttribPointer(1, 3, gl.FLOAT, false, VERTEX_SIZE, 4 * 3); // Normal
         // gl.enableVertexAttribArray(2);
@@ -76,6 +76,9 @@ export class Mesh {
         //     shader.setUniform1f(texture.type, count);
         //     gl.bindTexture(gl.TEXTURE_2D, this.textures[i].id);
         // });
+        
+        
+
 
         gl.bindVertexArray(this.VAO);
         gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);

@@ -50,7 +50,7 @@ gl.enable(gl.DEPTH_TEST);
 
 // })
 
-fetch('LP1.obj').then(x => x.text()).then(x => {
+fetch('test2.obj').then(x => x.text()).then(x => {
     const loader = new ObjLoader(x);
     const el = document.getElementById('run');
 
@@ -69,7 +69,7 @@ fetch('LP1.obj').then(x => x.text()).then(x => {
     const shader = new Shader(VS, FS);
     const porj = new float4x4().perspective(Math.PI / 2, 1024. / 768., 0.1, 100.);
 
-    const model = new float4x4().scale(.4, .4, .4);
+    const model = new float4x4().scale(4, 4, 4);
 
     // const info = objDoc.getDrawingInfo();
     console.log(loader);
@@ -78,15 +78,40 @@ fetch('LP1.obj').then(x => x.text()).then(x => {
 
     shader.enable();
 
-    loader.objects.forEach(obj => {
-        meshes.push(new Mesh(new Float32Array(loader.vertices), new Float32Array(loader.texCoord), new Uint16Array(obj.indices), [_texture]));
-    });
 
+    loader.objects.forEach(obj => {
+        const v = [];
+        const vt = [];
+
+        obj.indices.forEach(x => {
+            v.push(loader.vertices[x].x);
+            v.push(loader.vertices[x].y);
+            v.push(loader.vertices[x].z);
+        });
+
+        obj.texIndeces.forEach((x, i) => {
+            vt.push(loader.texCoord[x].x);
+            vt.push(loader.texCoord[x].y);
+        });
+
+
+        const indices = Array.from(Array(obj.indices.length).keys());
+        meshes.push(
+            new Mesh(new Float32Array(v),
+                new Float32Array(vt),
+                new Uint16Array(indices),
+                [_texture]));
+    });
     gl.activeTexture(gl.TEXTURE1)
-    const _texture = new Texture('6.jpg', TEXTURE_TYPES.DIFFUSE);
+    // const _texture = new Texture('6.jpg', TEXTURE_TYPES.DIFFUSE);
+    const _texture = new Texture('textures/handgun_C.jpg', TEXTURE_TYPES.DIFFUSE);
     _texture.create().then(() => {
         render()
     });
+
+
+
+    console.log(meshes);
 
     ///
 
@@ -103,10 +128,10 @@ fetch('LP1.obj').then(x => x.text()).then(x => {
 
             gl.clearColor(1, 1, 1, 1)
             gl.clear(gl.COLOR_BUFFER_BIT);
-            const t = Date.now() / 1000;
+            const t = Date.now() / 5000;
             const c = Math.cos(t);
             const s = Math.sin(t);
-            const cp = [2 * c, -3, 2 * s];
+            const cp = [3 * c, 5, 3 * s];
             const view = new float4x4().lookAt(cp, [0, 0, 0], [0, 1, 0]);
 
 
@@ -120,6 +145,9 @@ fetch('LP1.obj').then(x => x.text()).then(x => {
             // @ts-ignore
             // meshes.forEach(mesh => {
             //     mesh.draw(shader);
+            // })
+            // meshes.forEach(mesh => {
+            //     mesh.draw()
             // })
             meshes[3].draw();
 
