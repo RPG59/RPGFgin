@@ -1,3 +1,5 @@
+import {Input} from "./core/input";
+
 export let gl: WebGL2RenderingContext = null;
 export class RPGF {
     canvasEL: HTMLCanvasElement;
@@ -9,6 +11,7 @@ export class RPGF {
         if (el instanceof HTMLCanvasElement) {
             this.canvasEL = el;
             this.init();
+            Input.init();
         } else {
             throw new Error('Invalid canvas id');
         }

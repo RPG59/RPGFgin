@@ -81,7 +81,8 @@ export class Mesh {
 
 
         gl.bindVertexArray(this.VAO);
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+        // gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length)
         gl.activeTexture(gl.TEXTURE0);
     }
 }

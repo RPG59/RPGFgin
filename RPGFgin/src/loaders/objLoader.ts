@@ -1,4 +1,4 @@
-import { Mesh } from "../core/mesh";
+import {Mesh} from "../core/mesh";
 
 // Mesh[]
 
@@ -101,7 +101,9 @@ export class ObjLoader {
         for (let i = 0; i < len; ++i) {
             const item = arr[i].split('/').map(Number);
             face.push(item[0] - 1);
-            tex.push(item[1]);
+            if (item[1]) {
+                tex.push(item[1] - 1);
+            }
         }
 
         if (arr.length > 3) {
@@ -111,7 +113,6 @@ export class ObjLoader {
                 newIndexes.push(face[0]);
                 newIndexes.push(face[i - 1]);
                 newIndexes.push(face[i]);
-
                 newTex.push(tex[0]);
                 newTex.push(tex[i - 1]);
                 newTex.push(tex[i]);
@@ -127,7 +128,6 @@ export class ObjLoader {
             });
             // this.currentObject.indices = this.currentObject.indices.concat(face);
         }
-
     }
 
     parseObjectName(line: string): void {
@@ -150,7 +150,7 @@ export class ObjLoader {
         const vt = {
             x: +data[0],
             y: +data[1]
-        }
+        };
         this.texCoord.push(vt);
     }
 
@@ -161,6 +161,7 @@ class Object3D {
     indices: number[] = [];
     usemtl: string;
     texIndeces: number[] = [];
+
     constructor(name: string) {
         this.name = name;
     }

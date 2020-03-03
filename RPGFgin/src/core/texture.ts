@@ -18,6 +18,7 @@ export class Texture {
 	create(): Promise<void> {
 		return new Promise(res => {
 			this.blobLoaedr.load().then(blob => {
+				//@ts-ignore
 				createImageBitmap(blob, {imageOrientation: 'flipY'}).then(bitmap => {
 				// createImageBitmap(blob).then(bitmap => {
 					// this.img.onload = () => {
