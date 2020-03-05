@@ -58,31 +58,35 @@ export class Mesh {
         let normalCount = 1;
         let heightCount = 1;
 
-        // this.textures.forEach((texture, i) => {
-        //     let count = 0;
-        //     gl.activeTexture(gl.TEXTURE0 + i);
-        //     switch (texture.type) {
-        //         case TEXTURE_TYPES.DIFFUSE:
-        //             count = diffuseCount++;
-        //         case TEXTURE_TYPES.SPECULAR:
-        //             count = specularCount++;
-        //         case TEXTURE_TYPES.NORMAL:
-        //             count = normalCount++;
-        //         case TEXTURE_TYPES.HEIGHT:
-        //             count = heightCount++;
-        //         default:
-        //             return;
-        //     }
-        //     shader.setUniform1f(texture.type, count);
-        //     gl.bindTexture(gl.TEXTURE_2D, this.textures[i].id);
-        // });
+        this.textures.forEach((texture, i) => {
+            let count = 0;
+            gl.activeTexture(gl.TEXTURE0 + i + 1);
+            switch (texture.type) {
+                case TEXTURE_TYPES.DIFFUSE:
+                    count = diffuseCount++;
+                    break;
+                case TEXTURE_TYPES.SPECULAR:
+                    count = specularCount++;
+                    break;
+                case TEXTURE_TYPES.NORMAL:
+                    count = normalCount++;
+                    break;
+                case TEXTURE_TYPES.HEIGHT:
+                    count = heightCount++;
+                    break;
+                default:
+                    return;
+            }
+            shader.setUniform1i(texture.type, count);
+            gl.bindTexture(gl.TEXTURE_2D, this.textures[i].id);
+        });
         
         
 
 
         gl.bindVertexArray(this.VAO);
-        // gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-        gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length)
+        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+        // gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length);
         gl.activeTexture(gl.TEXTURE0);
     }
 }

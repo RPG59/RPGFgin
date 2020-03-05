@@ -49,8 +49,9 @@ export class Shader {
         gl.deleteShader(this.fsId);
     }
 
-    setUniform1f(name: string, data: number): void {
-
+    setUniform1i(name: string, data: number): void {
+        const location = gl.getUniformLocation(this.program, name);
+        gl.uniform1i(location, data);
     }
 
     setUniformMatrix4f(name: string, data: Float32Array): void {
