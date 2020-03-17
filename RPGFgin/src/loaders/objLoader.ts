@@ -1,9 +1,9 @@
-import { Mesh } from "../core/mesh";
-
-// Mesh[]
+import { Mesh, TEXTURE_TYPES } from "../core/mesh";
+import { FileLoader } from './fileLoader';
+import { Material, MTLParser } from './mtlParser';
+import { Texture } from '../core/texture';
 
 export class ObjLoader {
-	meshes: Mesh[] = [];
 	objects: Object3D[] = [];
 	mtllib: string[] = [];
 	usemtl: string[] = [];
@@ -11,6 +11,7 @@ export class ObjLoader {
 	texCoord: { x: number, y: number }[] = [];
 	normals: number[] = [];
 	indices: number[] = [];
+	mtlData: Material[] = [];
 
 	constructor(data: string) {
 		this.parse(data);
@@ -76,8 +77,6 @@ export class ObjLoader {
 			z: +data[2]
 		}
 		this.vertices.push(v);
-
-		// this.vertices = this.vertices.concat(line.replace('v', '').trim().split(/\s+/).map(x => Number(x)));
 	}
 
 	parseNormals(line: string): void {
@@ -123,7 +122,6 @@ export class ObjLoader {
 			tex.forEach(t => {
 				this.getCurrentObject().texIndeces.push(t);
 			});
-			// this.getCurrentObject.indices = this.getCurrentObject.indices.concat(face);
 		}
 	}
 
@@ -149,6 +147,56 @@ export class ObjLoader {
 		return this.objects[this.objects.length - 1];
 	}
 
+	load(): Promise<void> {
+		return new Promise(res => {
+			const files = this.mtllib.map(mtlPath => new FileLoader(mtlPath, 'text').load());
+			Promise.all(files).then(mtlFilesData => {
+				this.mtlData = mtlFilesData.reduce((r, x) => r.concat(new MTLParser(x).materials), []);
+				res();
+			});
+		});
+	}
+
+	getMeshes(): Promise<Mesh[]> {
+		const meshes = [];
+		const promises = [];
+		this.objects.forEach(object => {
+			const v = [];
+			const vt = [];
+			const mtl = this.mtlData.find(x => x.name === object.usemtl);
+			const textures = [];
+			const indices = Array.from(Array(object.indices.length).keys());
+
+			if (mtl && mtl.map_Ka) {
+				const texture = new Texture(mtl.map_Ka, TEXTURE_TYPES.DIFFUSE);
+				promises.push(texture.create());
+				textures.push(texture);
+			}
+
+			object.indices.forEach(x => {
+				v.push(this.vertices[x].x);
+				v.push(this.vertices[x].y);
+				v.push(this.vertices[x].z);
+			});
+
+			object.texIndeces.forEach(x => {
+				vt.push(this.texCoord[x].x);
+				vt.push(this.texCoord[x].y);
+			});
+
+			meshes.push(new Mesh(
+				new Float32Array(v),
+				new Float32Array(vt),
+				new Uint16Array(indices),
+				textures
+			));
+		});
+
+
+		return new Promise(res => {
+			Promise.all(promises).then(() => res(meshes));
+		});
+	}
 }
 
 class Object3D {

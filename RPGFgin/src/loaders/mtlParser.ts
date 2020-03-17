@@ -97,7 +97,7 @@ export class MTLParser {
 
 }
 
-class Material {
+export class Material {
 	name: string;
 	Ns: number;
 	Ni: number;
