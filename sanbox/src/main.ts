@@ -1,91 +1,48 @@
-import { RPGF, gl } from "../../RPGFgin/src/main";
+import { gl, initWebGL } from "../../RPGFgin/src/main";
 import { Shader } from "../../RPGFgin/src/core/shader";
-import { float4x4 } from "../../RPGFgin/src/math/float4x4";
 
 //@ts-ignore
 import FS from '../../RPGFgin/shaders/default.frag';
 //@ts-ignore
 import VS from '../../RPGFgin/shaders/default.vert';
 import { ObjLoader } from "../../RPGFgin/src/loaders/objLoader";
-import { Input } from "../../RPGFgin/src/core/input";
+import { Camera } from "../../RPGFgin/src/core/camera";
+import { CameraInputControl } from "../../RPGFgin/src/core/cameraInputControl";
+import { Renderer } from "../../RPGFgin/src/core/renderer";
+import { float3 } from "../../RPGFgin/src/math/float3";
+import { Scene } from "../../RPGFgin/src/core/scene";
+import { RenderableObject } from "../../RPGFgin/src/core/RenderableObject";
+import { Material } from "../../RPGFgin/src/core/material";
+import { UserEvents } from "../../RPGFgin/src/core/input";
 
 
-const rpgf = new RPGF('canvas3d');
+initWebGL('canvas3d');
 
-gl.enable(gl.DEPTH_TEST);
+// fetch('textured_output.obj').then(x => x.text()).then(x => {
+fetch('LP1.obj').then(x => x.text()).then(async x => {
+    const loader = new ObjLoader(x);
+    const shader = new Shader(VS, FS);
+    const camera = new Camera(Math.PI / 4, window.innerWidth / window.innerHeight, .1, 100., new float3(0, 0, 10));
+    const userEvents = new UserEvents();
+    const control = new CameraInputControl(camera, userEvents);
 
-fetch('LP1.obj').then(x => x.text()).then(x => {
-	const loader = new ObjLoader(x);
-	const el = document.getElementById('run');
+    await loader.load()
 
-	const shader = new Shader(VS, FS);
-	const porj = new float4x4().perspective(Math.PI / 2, 1024. / 768., 0.1, 100.);
+    const meshes = await loader.getMeshes();
+    const scene = new Scene([new RenderableObject(meshes, new Material(shader))]);
+    const renderer = new Renderer(camera, scene);
 
-	const model = new float4x4();
+    function mainLoop() {
+        control.update();
 
+        gl.clearColor(1, 1, 1, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
 
-	let meshes = [];
+        renderer.render();
 
-	shader.enable();
+        requestAnimationFrame(mainLoop);
+    }
 
-	loader.load().then(() => {
-		loader.getMeshes().then(m => {
-			meshes = m;
-			render();
-		});
-	});
-
-	let X_counter = 0;
-	let Z_counter = 0;
-
-	function render() {
-		const texLocation = gl.getUniformLocation(shader.program, '_tex');
-
-		gl.uniform1i(texLocation, 1);
-
-		setInterval(() => {
-			if (Input.keys['KeyW']) {
-				Z_counter += 0.1;
-			}
-			if (Input.keys['KeyS']) {
-				Z_counter -= 0.1;
-			}
-			if (Input.keys['KeyD']) {
-				X_counter += 0.1;
-			}
-			if (Input.keys['KeyA']) {
-				X_counter -= 0.1;
-			}
-
-
-			model.translate([0, Z_counter, X_counter]);
-			gl.clearColor(1, 1, 1, 1);
-			gl.clear(gl.COLOR_BUFFER_BIT);
-			const t = Date.now() / 5000;
-			const c = Math.cos(t);
-			const s = Math.sin(t);
-			const cp = [2 * c, 5, 2 * s];
-			const view = new float4x4().lookAt(cp, [0, 0, 0], [0, 1, 0]);
-
-
-			shader.setUniformMatrix4f('u_projMatrix', porj.elements);
-			shader.setUniformMatrix4f('u_viewMatrix', view.elements);
-			shader.setUniformMatrix4f('u_modelMatrix', model.elements);
-			//console.log(objDoc.isMTLComplete());
-
-
-			// const mesh = new Mesh(_vertices, _indices, []);
-			// @ts-ignore
-			// meshes.forEach(mesh => {
-			//     mesh.draw(shader);
-			// })
-			meshes.forEach(mesh => {
-				mesh.draw(shader)
-			})
-			// meshes[3].draw(shader);
-
-		}, 33);
-	}
-
+    mainLoop();
 
 });

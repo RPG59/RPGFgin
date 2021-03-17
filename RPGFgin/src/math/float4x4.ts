@@ -1,3 +1,5 @@
+import { float3 } from "./float3";
+
 export class float4x4 {
     elements;
 
@@ -46,10 +48,10 @@ export class float4x4 {
         return this;
     }
 
-    translate(arr) {
-        this.elements[0 + 3 * 4] = arr[0];
-        this.elements[1 + 3 * 4] = arr[1];
-        this.elements[2 + 3 * 4] = arr[2];
+    translate(v: float3) {
+        this.elements[0 + 3 * 4] = v.x;
+        this.elements[1 + 3 * 4] = v.y;
+        this.elements[2 + 3 * 4] = v.z;
 
         return this;
     }
@@ -129,6 +131,7 @@ export class float4x4 {
 
         return this;
     }
+
     perspective(fovy, aspect, near, far) {
         const f = 1 / Math.tan(fovy / 2);
         const nf = 1 / (near - far);
@@ -142,5 +145,42 @@ export class float4x4 {
         ]);
 
         return res;
+    }
+
+    fromEuler(euler) {
+        const te = this.elements;
+
+        const x = euler.x, y = euler.y, z = euler.z;
+        const a = Math.cos(x), b = Math.sin(x);
+        const c = Math.cos(y), d = Math.sin(y);
+        const e = Math.cos(z), f = Math.sin(z);
+
+        const ae = a * e, af = a * f, be = b * e, bf = b * f;
+
+        te[0] = c * e;
+        te[4] = -c * f;
+        te[8] = d;
+
+        te[1] = af + be * d;
+        te[5] = ae - bf * d;
+        te[9] = -b * c;
+
+        te[2] = bf - ae * d;
+        te[6] = be + af * d;
+        te[10] = a * c;
+
+        // bottom row
+        te[3] = 0;
+        te[7] = 0;
+        te[11] = 0;
+
+        // last column
+        te[12] = 0;
+        te[13] = 0;
+        te[14] = 0;
+        te[15] = 1;
+
+        return this;
+
     }
 }

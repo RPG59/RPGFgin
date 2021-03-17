@@ -1,29 +1,28 @@
-import {Input} from "./core/input";
 
 export let gl: WebGL2RenderingContext = null;
-export class RPGF {
-    canvasEL: HTMLCanvasElement;
 
-    constructor(canvasID: string) {
-        if (!canvasID) throw new Error('Invalid element id');
-        const el = document.getElementById(canvasID);
+export function initWebGL(canvasID: string): void {
+    if (!canvasID) throw new Error('Invalid element id');
 
-        if (el instanceof HTMLCanvasElement) {
-            this.canvasEL = el;
-            this.init();
-            Input.init();
-        } else {
-            throw new Error('Invalid canvas id');
-        }
-    }
+    const canvasEL = document.getElementById(canvasID);
 
-    private init(): void {
-        let context = this.canvasEL.getContext('webgl2');
-        if (context instanceof WebGL2RenderingContext) {
-            gl = context;
-        } else {
-            throw new Error('WEBGL2 it not supported!');
-        }
+    if (canvasEL instanceof HTMLCanvasElement) {
+        canvasEL.width = window.innerWidth;
+        canvasEL.height = window.innerHeight;
+
+        init(canvasEL);
+    } else {
+        throw new Error('Invalid canvas id');
     }
 }
 
+function init(canvasEL: HTMLCanvasElement): void {
+    let context = canvasEL.getContext('webgl2');
+    if (context instanceof WebGL2RenderingContext) {
+        gl = context;
+
+        gl.enable(gl.DEPTH_TEST);
+    } else {
+        throw new Error('WEBGL2 it not supported!');
+    }
+}

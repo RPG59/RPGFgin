@@ -1,49 +1,48 @@
 import { gl } from "../main";
 import { StaticVerticesBuffer } from "./staticVerticesBuffer";
 import { StaticIndexBuffer } from "./staticIndexBuffer";
-import { Shader } from "./shader";
 import { Texture } from "./texture";
+import { float4x4 } from "../math/float4x4";
+import { float3 } from "../math/float3";
 
 export const VERTEX_SIZE = 32;
-export const TEXTURE_TYPES = {
-    DIFFUSE: 'texture_diffuse',
-    SPECULAR: 'texture_specular',
-    NORMAL: 'texture_normal',
-    HEIGHT: 'texture_height'
-};
+
+export enum TEXTURE_TYPES {
+    DIFFUSE = 'texture_diffuse',
+    SPECULAR = 'texture_specular',
+    NORMAL = 'texture_normal',
+    HEIGHT = 'texture_height'
+}
 
 export class Mesh {
-    vertices: Float32Array;
-    texCoords: Float32Array;
-    indices: Uint16Array;
     textures: Texture[];
+    numIndices: number;
     VAO: WebGLVertexArrayObject;
     VBO: StaticVerticesBuffer;
     TBO: StaticVerticesBuffer;
     EBO: StaticIndexBuffer;
 
-    constructor(vertices: Float32Array, texCoords: Float32Array, indices: Uint16Array, textures: Texture[]) {
-        this.vertices = vertices;
-        this.indices = indices;
+    constructor(vertices: Float32Array,
+                texCoords: Float32Array,
+                indices: Uint16Array,
+                textures: Texture[],
+                private position: float3 = new float3()
+    ) {
         this.textures = textures;
-        this.texCoords = texCoords;
+        this.numIndices = indices.length;
 
-        this.initMesh();
-    }
-
-    initMesh(): void {
         this.VAO = gl.createVertexArray();
         gl.bindVertexArray(this.VAO);
-        this.VBO = new StaticVerticesBuffer(this.vertices);
+        this.VBO = new StaticVerticesBuffer(vertices);
 
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, null); // Positions
 
-        this.TBO = new StaticVerticesBuffer(this.texCoords);
+        this.TBO = new StaticVerticesBuffer(texCoords);
         gl.enableVertexAttribArray(2);
         gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, null);
 
-        this.EBO = new StaticIndexBuffer(this.indices);
+        this.EBO = new StaticIndexBuffer(indices);
         // gl.enableVertexAttribArray(1);
         // gl.vertexAttribPointer(1, 3, gl.FLOAT, false, VERTEX_SIZE, 4 * 3); // Normal
         // gl.enableVertexAttribArray(2);
@@ -52,41 +51,11 @@ export class Mesh {
         gl.bindVertexArray(null);
     }
 
-    draw(shader: Shader): void {
-        let diffuseCount = 1;
-        let specularCount = 1;
-        let normalCount = 1;
-        let heightCount = 1;
+    getTextures(): Texture[] {
+        return this.textures;
+    }
 
-        this.textures.forEach((texture, i) => {
-            let count = 0;
-            gl.activeTexture(gl.TEXTURE0 + i + 1);
-            switch (texture.type) {
-                case TEXTURE_TYPES.DIFFUSE:
-                    count = diffuseCount++;
-                    break;
-                case TEXTURE_TYPES.SPECULAR:
-                    count = specularCount++;
-                    break;
-                case TEXTURE_TYPES.NORMAL:
-                    count = normalCount++;
-                    break;
-                case TEXTURE_TYPES.HEIGHT:
-                    count = heightCount++;
-                    break;
-                default:
-                    return;
-            }
-            shader.setUniform1i(texture.type, count);
-            gl.bindTexture(gl.TEXTURE_2D, this.textures[i].id);
-        });
-        
-        
-
-
-        gl.bindVertexArray(this.VAO);
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
-        // gl.drawArrays(gl.TRIANGLES, 0, this.vertices.length);
-        gl.activeTexture(gl.TEXTURE0);
+    getModelMatrix(): float4x4 {
+        return new float4x4().translate(this.position);
     }
 }
