@@ -3,7 +3,7 @@ import { Scene } from "./scene";
 import { DatGui } from "../debug/datGui";
 import { Shader } from "./shader";
 import { gl } from "../main";
-import { Mesh, TEXTURE_TYPES } from "./mesh";
+import { Mesh } from "./mesh";
 
 export class Renderer {
     datGui: DatGui;
@@ -44,7 +44,7 @@ export class Renderer {
 
 
     render(): void {
-        gl.clearColor(1, 1, 1, 1);
+        gl.clearColor(0, 0, 0, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         this.updateGui();
@@ -77,29 +77,7 @@ export class Renderer {
         const textures = mesh.getTextures();
 
         textures.forEach((texture, i) => {
-            // let count = 0;
-
-            // gl.activeTexture(gl.TEXTURE0 + i + 1);
-            // switch (texture.type) {
-            //     case TEXTURE_TYPES.DIFFUSE:
-            //         count = diffuseCount++;
-            //         break;
-            //     case TEXTURE_TYPES.SPECULAR:
-            //         count = specularCount++;
-            //         break;
-            //     case TEXTURE_TYPES.NORMAL:
-            //         count = normalCount++;
-            //         break;
-            //     case TEXTURE_TYPES.HEIGHT:
-            //         count = heightCount++;
-            //         break;
-            //     default:
-            //         return;
-            // }
-            // shader.setUniform1i(texture.type, count);
-            // gl.bindTexture(gl.TEXTURE_2D, textures[i].id);
-
-            shader.setUniform1i('_tex', i);
+            shader.setUniform1i('mainSampler', i);
             gl.bindTexture(gl.TEXTURE_2D, texture.id);
         });
 

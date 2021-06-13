@@ -1,42 +1,36 @@
 #version 300 es
 
-precision lowp float;
-
-struct Material {
-     sampler2D texture_diffuse[5];
-     sampler2D texture_normal[5];
-     sampler2D texture_specular[5];
-     sampler2D texture_height[5];
-};
-
-struct Light {
-    vec3 position;
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-    float constant;
-    float linear;
-    float quadratic;
-};
-
+precision highp float;
 
 out vec4 fragColor;
 
-in vec3 normal;
-in vec2 texCoords;
-in vec3 fragPos;
+in vec3 v_normals;
+in vec2 v_uv;
+in vec3 v_fragPos;
 
-uniform vec3 cameraPosition;
-uniform vec3 lightSourcePosition;
-// uniform Material material;
-uniform Light light;
-uniform sampler2D _tex;
+uniform vec3 u_cameraPosition;
+uniform mat4 u_viewMatrix;
+
+vec3 lightPos = vec3(-1., 1., 1.);
+vec3 lightColor = vec3(1., 1., 1.);
+vec3 albedo = vec3(.3, .2, .1);
+float ambientStreight = .3;
+float specularStrength = .5;
+
 
 
 void main() {
-//    fragColor = vec4(.3, .1, .5, 1.);
-    //fragColor = vec4(texCoords.x, texCoords.y, 0., 1.);
-    fragColor = texture(_tex, texCoords);
+    vec3 normals = normalize(v_normals);
+    vec3 lightDir = normalize(lightPos - v_fragPos);
+    vec3 diffuse = lightColor * max(dot(normals, lightDir), 0.);
+
+    vec3 ambient = lightColor * ambientStreight;
+
+    vec3 viewDir = normalize(vec3(u_viewMatrix[3].x, u_viewMatrix[3].y, u_viewMatrix[3].z) - v_fragPos);
+    vec3 reflectDir = reflect(-lightDir, normals);
+    float spec = pow(max(dot(viewDir, reflectDir), .0), 128.);
+    vec3 specular = lightColor * spec * specularStrength;
+
+    fragColor = vec4(albedo * (ambient + diffuse + specular), 1.);
 }
+

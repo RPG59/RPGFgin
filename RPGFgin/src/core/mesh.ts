@@ -20,10 +20,12 @@ export class Mesh {
     VAO: WebGLVertexArrayObject;
     VBO: StaticVerticesBuffer;
     TBO: StaticVerticesBuffer;
+    NBO: StaticVerticesBuffer;
     EBO: StaticIndexBuffer;
 
     constructor(vertices: Float32Array,
                 texCoords: Float32Array,
+                normals: Float32Array,
                 indices: Uint16Array,
                 textures: Texture[],
                 private position: float3 = new float3()
@@ -38,9 +40,14 @@ export class Mesh {
         gl.enableVertexAttribArray(0);
         gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, null); // Positions
 
+        this.NBO = new StaticVerticesBuffer(normals);
+        gl.enableVertexAttribArray(1);
+        gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, null);
+
         this.TBO = new StaticVerticesBuffer(texCoords);
         gl.enableVertexAttribArray(2);
         gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, null);
+
 
         this.EBO = new StaticIndexBuffer(indices);
         // gl.enableVertexAttribArray(1);

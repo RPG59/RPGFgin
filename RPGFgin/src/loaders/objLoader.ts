@@ -9,7 +9,7 @@ export class ObjLoader {
     usemtl: string[] = [];
     vertices: { x: number, y: number, z: number }[] = [];
     texCoord: { x: number, y: number }[] = [];
-    normals: number[] = [];
+    normals: { x: number, y: number, z: number }[] = [];
     indices: number[] = [];
     mtlData: Material[] = [];
 
@@ -80,7 +80,13 @@ export class ObjLoader {
     }
 
     parseNormals(line: string): void {
-
+        const data = line.substr(2).trim().split(/\s+/);
+        const vn = {
+            x: +data[0],
+            y: +data[1],
+            z: +data[2]
+        };
+        this.normals.push(vn);
     }
 
     parseUsemtl(line: string): void {
@@ -92,18 +98,27 @@ export class ObjLoader {
         const len = arr.length;
         const face = [];
         const tex = [];
+        const normal = [];
 
         for (let i = 0; i < len; ++i) {
-            const item = arr[i].split('/').map(Number);
-            face.push(item[0] - 1);
+            const item = arr[i].split('/');
+
+            face.push(Number(item[0]) - 1);
+
             if (item[1]) {
-                tex.push(item[1] - 1);
+                tex.push(Number(item[1]) - 1);
+            }
+
+            if(item[2]) {
+                normal.push(Number(item[2]) - 1);
             }
         }
 
         if (arr.length > 3) {
             const newIndexes = [];
             const newTex = [];
+            const newNormal = [];
+
             for (let i = 2; i < face.length; ++i) {
                 newIndexes.push(face[0]);
                 newIndexes.push(face[i - 1]);
@@ -112,15 +127,25 @@ export class ObjLoader {
                 newTex.push(tex[0]);
                 newTex.push(tex[i - 1]);
                 newTex.push(tex[i]);
+
+                newNormal.push(normal[0]);
+                newNormal.push(normal[i - 1]);
+                newNormal.push(normal[i]);
             }
             this.getCurrentObject().indices = this.getCurrentObject().indices.concat(newIndexes);
             this.getCurrentObject().texIndeces = this.getCurrentObject().texIndeces.concat(newTex);
+            this.getCurrentObject().normalIndices = this.getCurrentObject().normalIndices.concat(newNormal);
         } else {
             face.forEach(f => {
                 this.getCurrentObject().indices.push(f);
             });
+
             tex.forEach(t => {
                 this.getCurrentObject().texIndeces.push(t);
+            });
+
+            normal.forEach(n => {
+                this.getCurrentObject().normalIndices.push(n);
             });
         }
     }
@@ -163,6 +188,7 @@ export class ObjLoader {
         this.objects.forEach(object => {
             const v = [];
             const vt = [];
+            const vn = [];
             const mtl = this.mtlData.find(x => x.name === object.usemtl);
             const textures = [];
             const indices = Array.from(Array(object.indices.length).keys());
@@ -185,9 +211,17 @@ export class ObjLoader {
                 vt.push(this.texCoord[x].y);
             });
 
+            object.normalIndices.forEach(x => {
+                vn.push(this.normals[x].x);
+                vn.push(this.normals[x].y);
+                vn.push(this.normals[x].z);
+
+            });
+
             meshes.push(new Mesh(
                 new Float32Array(v),
                 new Float32Array(vt),
+                new Float32Array(vn),
                 new Uint16Array(indices),
                 textures
             ));
@@ -205,6 +239,7 @@ class Object3D {
     indices: number[] = [];
     usemtl: string;
     texIndeces: number[] = [];
+    normalIndices: number[] = [];
 
     constructor(name: string) {
         this.name = name;

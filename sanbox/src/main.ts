@@ -19,7 +19,7 @@ import { UserEvents } from "../../RPGFgin/src/core/input";
 initWebGL('canvas3d');
 
 // fetch('textured_output.obj').then(x => x.text()).then(x => {
-fetch('LP1.obj').then(x => x.text()).then(async x => {
+fetch('foobar.obj').then(x => x.text()).then(async x => {
     const loader = new ObjLoader(x);
     const shader = new Shader(VS, FS);
     const camera = new Camera(Math.PI / 4, window.innerWidth / window.innerHeight, .1, 100., new float3(0, 0, 10));
@@ -35,7 +35,6 @@ fetch('LP1.obj').then(x => x.text()).then(async x => {
     function mainLoop() {
         control.update();
 
-        gl.clearColor(1, 1, 1, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
         renderer.render();
