@@ -47,9 +47,9 @@ fetch("foobar.obj")
     const raycaster = new Raycast();
 
     window.addEventListener("click", ({ clientX, clientY, ctrlKey }) => {
-      if (!ctrlKey) {
-        return;
-      }
+      // if (!ctrlKey) {
+      //   return;
+      // }
       mouse.x = (2 * clientX) / window.innerWidth - 1;
       mouse.y = 1 - (2 * clientY) / window.innerHeight;
       raycaster.raycast(mouse, scene.renderableObjects, camera);

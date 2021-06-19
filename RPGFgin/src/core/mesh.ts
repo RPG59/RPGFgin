@@ -22,6 +22,7 @@ export class Mesh {
   TBO: StaticVerticesBuffer;
   NBO: StaticVerticesBuffer;
   EBO: StaticIndexBuffer;
+  public allowIntersections: boolean = true;
 
   constructor(
     public vertices: Float32Array,
@@ -47,9 +48,9 @@ export class Mesh {
       gl.vertexAttribPointer(1, 3, gl.FLOAT, false, 0, null);
     }
 
-    this.TBO = new StaticVerticesBuffer(texCoords);
-    gl.enableVertexAttribArray(2);
-    gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, null);
+    // this.TBO = new StaticVerticesBuffer(texCoords);
+    // gl.enableVertexAttribArray(2);
+    // gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, null);
 
     this.EBO = new StaticIndexBuffer(indices);
     // gl.enableVertexAttribArray(1);

@@ -12,6 +12,7 @@ import {
   cross,
   sub,
   add,
+  epsilon,
 } from "glm-js";
 import { Material } from "./material";
 import { gl } from "../main";
@@ -19,6 +20,19 @@ import { gl } from "../main";
 export class Raycast {
   private rayOrigin: any;
   private rayDirection: any;
+
+  createGeometry(origin: vec3, direction: vec3) {
+    const mesh = new Mesh(
+      new Float32Array([...origin.elements, ...direction.elements]),
+      new Float32Array(),
+      new Float32Array(),
+      new Uint16Array([0, 1])
+    );
+
+    mesh.allowIntersections = false;
+
+    return mesh;
+  }
 
   raycast(coords: vec2, objects: RenderableObject[], camera: Camera) {
     const inverseView = inverse(camera.getViewMatrix());
@@ -38,102 +52,126 @@ export class Raycast {
       ).mul(200)
     );
 
+    // objects.push(
+    //   new RenderableObject(
+    //     [this.createGeometry(this.rayOrigin, this.rayDirection)],
+    //     new Material(objects[0].material.getShader(), gl.LINES)
+    //   )
+    // );
+
     // this.rayDirection = add(
     //   this.rayOrigin,
     //   mul(normalize(new vec3(direction.x, direction.y, direction.z)), 20)
     // );
 
-    const mesh = new Mesh(
-      new Float32Array([
-        ...this.rayOrigin.elements,
-        ...this.rayDirection.elements,
-      ]),
-      new Float32Array(),
-      new Float32Array(),
-      new Uint16Array([0, 1])
-    );
-
+    // objects[0].meshes.push(mesh);
+    let _mesh = this.createGeometry(vec3(0, 0, 0), vec3(0, 0, 0));
     objects.push(
       new RenderableObject(
-        [mesh],
+        [],
         new Material(objects[0].material.getShader(), gl.LINES)
       )
     );
 
-    // objects[0].meshes.push(mesh);
+    objects.forEach((object) => {
+      object.meshes.forEach((mesh) => {
+        if (!mesh.allowIntersections) {
+          return;
+        }
 
-    // objects.forEach((object) => {
-    //   object.meshes.forEach((mesh) => {
-    //     for (let i = 0; i < mesh.vertices.length; i += 9) {
-    //       const { vertices } = mesh;
-    //       const a = new float3(
-    //         vertices[i + 0],
-    //         vertices[i + 1],
-    //         vertices[i + 2]
-    //       );
-    //       const b = new float3(
-    //         vertices[i + 3],
-    //         vertices[i + 4],
-    //         vertices[i + 5]
-    //       );
-    //       const c = new float3(
-    //         vertices[i + 6],
-    //         vertices[i + 7],
-    //         vertices[i + 7]
-    //       );
-    //       const intersection = this.rayTriangleIntersection(a, b, c);
+        for (let i = 0; i < mesh.vertices.length; i += 9) {
+          const { vertices } = mesh;
+          const a = new vec3(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
+          const b = new vec3(vertices[i + 3], vertices[i + 4], vertices[i + 5]);
+          const c = new vec3(vertices[i + 6], vertices[i + 7], vertices[i + 7]);
+          const intersection = this.rayTriangleIntersection(a, b, c);
 
-    //       if (intersection) {
-    //         console.log(intersection);
-    //       }
-    //     }
-    //   });
-    // });
+          if (intersection) {
+            console.log(intersection);
+            objects[1].meshes[0] = this.createGeometry(
+              intersection.intersectionPoint,
+              this.rayOrigin
+            );
+            return;
+          }
+        }
+      });
+    });
   }
 
   rayTriangleIntersection(v0, v1, v2) {
-    const A = sub(v1, v0);
-    const B = sub(v2, v0);
-    const C = A.clone().cross(B).normalize(); // plans normal
-    const DdN = this.rayDirection.clone().dot(C);
+    const edge0 = sub(v1, v0);
+    const edge1 = sub(v2, v0);
+    const N = normalize(cross(edge0, edge1));
+    const NdotDir = dot(this.rayDirection, N);
 
-    // console.log(DdN);
-
-    if (DdN === 0) {
-      console.log("TEST!!!");
+    if (Math.abs(NdotDir) < epsilon()) {
       return;
     }
 
-    if (DdN > 0) {
+    // const t = dot(sub(v0, this.rayOrigin), N) / dot(this.rayDirection, N);
+
+    // TODO: i dont understand how it works!!!
+    const d = dot(N, v0);
+    const t = (dot(N, this.rayOrigin) + d) / NdotDir;
+    //--------------------
+
+    if (t < 0) {
       return;
     }
 
-    const diff = this.rayOrigin.clone().sub(v0);
-    const DdQxE2 = this.rayDirection.dot(diff.cross(B));
+    const intersectionPoint = add(this.rayOrigin, mul(this.rayDirection, t));
 
-    if (DdQxE2 < 0) {
+    const vp0 = sub(intersectionPoint, v0);
+
+    if (dot(cross(edge0, vp0), N) < 0) {
       return;
     }
 
-    const DdE1xQ = this.rayDirection.dot(A.clone().cross(diff));
+    const vp1 = sub(intersectionPoint, v1);
 
-    if (DdE1xQ < 0) {
+    if (dot(cross(sub(v2, v1), vp1), N) < 0) {
       return;
     }
 
-    if (DdQxE2 + DdE1xQ > DdN) {
+    const vp2 = sub(intersectionPoint, v2);
+
+    if (dot(cross(sub(v0, v2), vp2), N) < 0) {
       return;
     }
 
-    const QdN = diff.dot(C);
+    return { intersectionPoint, N };
 
-    if (QdN > 0) {
-      return;
-    }
+    // if (DdN > 0) {
+    //   return;
+    // }
 
-    return this.rayDirection
-      .clone()
-      .multiplyScalar(QdN / DdN)
-      .add(this.rayOrigin);
+    // const diff = sub(this.rayOrigin, v0);
+    // const DdQxE2 = sub(this.rayDirection, B);
+
+    // if (DdQxE2 < 0) {
+    //   return;
+    // }
+
+    // const DdE1xQ = dot(this.rayDirection, cross(A, diff));
+
+    // if (DdE1xQ < 0) {
+    //   return;
+    // }
+
+    // if (DdQxE2 + DdE1xQ > DdN) {
+    //   return;
+    // }
+
+    // const QdN = dot(diff, C);
+
+    // if (QdN > 0) {
+    //   return;
+    // }
+
+    // return mul(this.rayDirection, QdN / DdN);
+    // .clone()
+    // .multiplyScalar(QdN / DdN)
+    // .add(this.rayOrigin);
   }
 }
