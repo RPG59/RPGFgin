@@ -12,7 +12,7 @@ vec3 lightPos = vec3(-1., 1., 1.);
 vec3 lightColor = vec3(1., 1., 1.);
 vec3 albedo = vec3(1., 1., 1.);
 float ambientStreight = .3;
-float specularStrength = .5;
+float specularStrength = .3;
 
 
 

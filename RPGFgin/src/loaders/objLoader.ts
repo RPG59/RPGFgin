@@ -34,30 +34,41 @@ export class ObjLoader {
 
     while ((line = lines[i++]) !== null) {
       line = line.trim();
-      const command = this.getCommand(line);
+
+      if (!line.length) {
+        continue;
+      }
       if (!(i % 1000)) {
         console.log(i + " / ", lines.length);
       }
 
-      switch (command) {
+      switch (line[0]) {
         case "#":
           continue;
-        case "mtllib":
+        case "m":
           this.parseMtllib(line);
           continue;
         case "o":
         case "g":
           this.parseObjectName(line);
           continue;
-        case "v":
-          this.parseVetices(line);
-          continue;
-        case "vt":
-          this.parseTextureCoords(line);
-          continue;
-        case "vn":
-          this.parseNormals(line);
-          continue;
+        case "v": {
+          const data = line.split(/\s+/);
+          switch (data[0]) {
+            case "v":
+              this.parseVetices(data);
+              continue;
+            case "vt":
+              this.parseTextureCoords(data);
+              continue;
+            case "vn":
+              this.parseNormals(data);
+              continue;
+            default:
+              continue;
+          }
+        }
+        // case "usemtl":
         case "usemtl":
           this.parseUsemtl(line);
           continue;
@@ -70,27 +81,20 @@ export class ObjLoader {
     }
   }
 
-  getCommand(line: string): string | null {
-    const words = line.split(" ");
-    return words.length > 1 ? words[0] : null;
-  }
-
-  parseVetices(line: string): void {
-    const data = line.substr(1).trim().split(/\s+/);
+  parseVetices(data: string[]): void {
     const v = {
-      x: +data[0],
-      y: +data[1],
-      z: +data[2],
+      x: +data[1],
+      y: +data[2],
+      z: +data[3],
     };
     this.vertices.push(v);
   }
 
-  parseNormals(line: string): void {
-    const data = line.substr(2).trim().split(/\s+/);
+  parseNormals(data: string[]): void {
     const vn = {
-      x: +data[0],
-      y: +data[1],
-      z: +data[2],
+      x: +data[1],
+      y: +data[2],
+      z: +data[3],
     };
     this.normals.push(vn);
   }
@@ -168,11 +172,10 @@ export class ObjLoader {
     this.mtllib.push(line.split(" ")[1]);
   }
 
-  parseTextureCoords(line: string): void {
-    const data = line.substr(2).trim().split(/\s+/);
+  parseTextureCoords(data: string[]): void {
     const vt = {
-      x: +data[0],
-      y: +data[1],
+      x: +data[1],
+      y: +data[2],
     };
     this.texCoord.push(vt);
   }
