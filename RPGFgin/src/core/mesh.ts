@@ -26,9 +26,9 @@ export class Mesh {
 
   constructor(
     public vertices: Float32Array,
-    public texCoords: Float32Array,
-    public normals: Float32Array,
     public indices: Uint16Array,
+    public texCoords: Float32Array = new Float32Array([]),
+    public normals: Float32Array = new Float32Array([]),
     textures: Texture[] = [],
     private position: vec3 = new vec3()
   ) {

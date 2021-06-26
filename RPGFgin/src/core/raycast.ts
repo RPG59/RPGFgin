@@ -1,6 +1,5 @@
 import { Camera } from "./camera";
 import { RenderableObject } from "./RenderableObject";
-import { Mesh } from "./mesh";
 import {
   normalize,
   inverse,
@@ -14,25 +13,11 @@ import {
   add,
   epsilon,
 } from "glm-js";
-import { Material } from "./material";
 import { gl } from "../main";
 
 export class Raycast {
   private rayOrigin: any;
   private rayDirection: any;
-
-  createGeometry(arr) {
-    const mesh = new Mesh(
-      new Float32Array(arr),
-      new Float32Array(),
-      new Float32Array(),
-      new Uint16Array([0, 1])
-    );
-
-    mesh.allowIntersections = false;
-
-    return mesh;
-  }
 
   raycast(coords: vec2, objects: RenderableObject[], camera: Camera) {
     const inverseView = inverse(camera.getViewMatrix());
@@ -53,15 +38,13 @@ export class Raycast {
       ).mul(200)
     );
 
-    let _mesh = this.createGeometry([0, 0, 0, 0, 0, 0]);
-    objects.push(
-      new RenderableObject(
-        [],
-        new Material(objects[0].material.getShader(), gl.LINES)
-      )
-    );
+    const intersections = [];
 
     objects.forEach((object) => {
+      if (object.material.renderMode === gl.LINES) {
+        return;
+      }
+
       object.meshes.forEach((mesh) => {
         if (!mesh.allowIntersections) {
           return;
@@ -75,15 +58,13 @@ export class Raycast {
           const intersection = this.rayTriangleIntersection(a, b, c);
 
           if (intersection) {
-            console.log(intersection);
-            objects[1].meshes[0] = this.createGeometry(
-              intersection.intersectionPoint.array.concat(intersection.N.array)
-            );
-            return;
+            intersections.push(intersection);
           }
         }
       });
     });
+
+    return intersections;
   }
 
   rayTriangleIntersection(v0, v1, v2) {
@@ -93,8 +74,6 @@ export class Raycast {
     const NdotDir = dot(this.rayDirection, N);
 
     if (Math.abs(NdotDir) < epsilon()) {
-      console.log("EPSILON TEST!");
-
       return;
     }
 
@@ -124,6 +103,6 @@ export class Raycast {
       return;
     }
 
-    return { intersectionPoint, N };
+    return { intersectionPoint, normal: N, distance: t };
   }
 }

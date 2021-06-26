@@ -237,9 +237,9 @@ export class ObjLoader {
       meshes.push(
         new Mesh(
           new Float32Array(v),
+          new Uint16Array(indices),
           new Float32Array(vt),
           new Float32Array(vn),
-          new Uint16Array(indices),
           textures
         )
       );

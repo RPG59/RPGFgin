@@ -15,57 +15,97 @@ import { Material } from "../../RPGFgin/src/core/material";
 import { UserEvents } from "../../RPGFgin/src/core/input";
 import { Raycast } from "../../RPGFgin/src/core/raycast";
 import { vec3, vec2 } from "glm-js";
+import { Mesh } from "../../RPGFgin/src/core/mesh";
+import { Game } from "./game";
 
 initWebGL("canvas3d");
 
-const mouse = new vec2();
+function main() {
+  const game = new Game();
+
+  const mainLoop = () => {
+    game.render();
+
+    requestAnimationFrame(mainLoop);
+  };
+
+  mainLoop();
+}
+
+main();
 
 // fetch('textured_output.obj').then(x => x.text()).then(x => {
-fetch("foobar.obj")
-  .then((x) => x.text())
-  .then(async (x) => {
-    const loader = new ObjLoader(x);
-    const shader = new Shader(VS, FS);
-    const camera = new Camera(
-      Math.PI / 4,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      100,
-      new vec3(0, 0, 10)
-    );
-    const userEvents = new UserEvents();
-    const control = new CameraInputControl(camera, userEvents);
+// fetch("foobar.obj")
+//   .then((x) => x.text())
+//   .then(async (x) => {
+//     const loader = new ObjLoader(x);
+//     const shader = new Shader(VS, FS);
+//     const camera = new Camera(
+//       Math.PI / 4,
+//       window.innerWidth / window.innerHeight,
+//       0.1,
+//       100,
+//       new vec3(0, 0, 10)
+//     );
+//     const userEvents = new UserEvents();
+//     const control = new CameraInputControl(camera, userEvents);
 
-    await loader.load();
+//     await loader.load();
 
-    const meshes = await loader.getMeshes();
-    const scene = new Scene([
-      new RenderableObject(meshes, new Material(shader)),
-    ]);
-    const renderer = new Renderer(camera, scene);
+//     const meshes = await loader.getMeshes();
+//     const scene = new Scene([
+//       new RenderableObject(meshes, new Material(shader)),
+//     ]);
+//     const renderer = new Renderer(camera, scene);
 
-    const raycaster = new Raycast();
+//     const raycaster = new Raycast();
 
-    window.addEventListener("mousemove", ({ clientX, clientY, ctrlKey }) => {
-      if (!ctrlKey) {
-        return;
-      }
+//     window.addEventListener("click", ({ clientX, clientY, ctrlKey }) => {
+//       if (!ctrlKey) {
+//         return;
+//       }
 
-      mouse.x = (2 * clientX) / window.innerWidth - 1;
-      mouse.y = 1 - (2 * clientY) / window.innerHeight;
-      raycaster.raycast(mouse, scene.renderableObjects, camera);
-    });
+//       const mouse = new vec2();
 
-    function mainLoop() {
-      control.update();
+//       mouse.x = (2 * clientX) / window.innerWidth - 1;
+//       mouse.y = 1 - (2 * clientY) / window.innerHeight;
 
-      gl.clear(gl.COLOR_BUFFER_BIT);
+//       const intersections = raycaster.raycast(
+//         mouse,
+//         scene.renderableObjects,
+//         camera
+//       );
 
-      renderer.render();
+//       if (!intersections.length) {
+//         return;
+//       }
 
-      //requestAnimationFrame(mainLoop);
-      setTimeout(mainLoop, 100);
-    }
+//       intersections.sort((a, b) => a.distance - b.distance);
 
-    mainLoop();
-  });
+//       const nearestIntersectionPoint = intersections[0].intersectienPoin;
+
+//       const mesh = new Mesh(
+//         new Float32Array([
+//           nearestIntersectionPoint.x,
+//           nearestIntersectionPoint.y,
+//           nearestIntersectionPoint.z,
+//         ]),
+//         new Uint16Array([0, 1, 0, 1])
+//       );
+
+//       scene.push(new RenderableObject([mesh], new Material(shader, gl.LINES)));
+//     });
+
+//     function mainLoop() {
+//       control.update();
+
+//       gl.clear(gl.COLOR_BUFFER_BIT);
+
+//       renderer.render();
+
+//       //requestAnimationFrame(mainLoop);
+//       setTimeout(mainLoop, 100);
+//     }
+
+//     mainLoop();
+//   });
