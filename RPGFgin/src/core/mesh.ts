@@ -1,9 +1,12 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { gl } from "../main";
 import { StaticVerticesBuffer } from "./staticVerticesBuffer";
 import { StaticIndexBuffer } from "./staticIndexBuffer";
 import { Texture } from "./texture";
 import { mat4, vec3 } from "glm-js";
 import { Shader } from "./shader";
+import { Renderer } from "./renderer";
 
 export const VERTEX_SIZE = 32;
 
@@ -22,7 +25,8 @@ export class Mesh {
   TBO: StaticVerticesBuffer;
   NBO: StaticVerticesBuffer;
   EBO: StaticIndexBuffer;
-  public allowIntersections: boolean = true;
+  allowIntersections: boolean = true;
+  uuid: string;
 
   constructor(
     public vertices: Float32Array,
@@ -32,6 +36,7 @@ export class Mesh {
     textures: Texture[] = [],
     private position: vec3 = new vec3()
   ) {
+    this.uuid = uuidv4();
     this.textures = textures;
     this.numIndices = indices.length;
 
@@ -72,6 +77,10 @@ export class Mesh {
   }
 
   render(shader: Shader, renderMode: number): void {
+    if (!Renderer.activeMeshesMap[this.uuid] && this.allowIntersections) {
+      return;
+    }
+
     this.textures.forEach((texture, i) => {
       shader.setUniform1i("mainSampler", i);
       gl.bindTexture(gl.TEXTURE_2D, texture.id);

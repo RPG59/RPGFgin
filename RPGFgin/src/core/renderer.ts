@@ -7,6 +7,7 @@ import { gl } from "../main";
 export class Renderer {
   datGui: DatGui;
   currentProgramId: number | null = null;
+  static activeMeshesMap = {};
 
   constructor(private camera: Camera, private scene: Scene) {
     this.initGui();
@@ -26,7 +27,15 @@ export class Renderer {
 
     this.scene.renderableObjects.forEach((renderableObject, i) => {
       renderableObject.meshes.forEach((mesh, meshIndex) => {
-        this.datGui.meshesFolder.add({ [meshIndex]: true }, [meshIndex]);
+        if (mesh.allowIntersections) {
+          Renderer.activeMeshesMap[mesh.uuid] = true;
+          this.datGui.meshesFolder
+            .add({ [mesh.uuid]: true }, mesh.uuid)
+            .onChange((e) => {
+              console.log(Renderer.activeMeshesMap);
+              Renderer.activeMeshesMap[mesh.uuid] = e;
+            });
+        }
       });
     });
   }

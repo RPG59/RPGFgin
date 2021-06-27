@@ -1,9 +1,12 @@
-import { vec2 } from "glm-js";
+//@ts-ignore
+import LineFS from "../../RPGFgin/shaders/line.frag";
+//@ts-ignore
+import LineVS from "../../RPGFgin/shaders/line.vert";
+//@ts-ignore
+import DefaultFS from "../../RPGFgin/shaders/default.frag";
+//@ts-ignore
+import DefaultVS from "../../RPGFgin/shaders/default.vert";
 
-//@ts-ignore
-import FS from "../../RPGFgin/shaders/default.frag";
-//@ts-ignore
-import VS from "../../RPGFgin/shaders/default.vert";
 import { Camera } from "../../RPGFgin/src/core/camera";
 import { Material } from "../../RPGFgin/src/core/material";
 import { Raycast } from "../../RPGFgin/src/core/raycast";
@@ -24,24 +27,23 @@ export class SceneManager {
   }
 
   async load() {
-    const defaultShader = new Shader(VS, FS);
+    const defaultShader = new Shader(DefaultVS, DefaultFS);
 
     await this.loadWorldGeometry(defaultShader);
-    this.initLineGenerator(defaultShader);
+    this.initLineGenerator();
   }
 
   async loadWorldGeometry(shader: Shader) {
     const objTextData = await fetch("foobar.obj").then((x) => x.text());
     const loader = new ObjLoader(objTextData);
 
-    await loader.load();
-
     const meshes = await loader.getMeshes();
 
     this.scene.push(new RenderableObject(meshes, new Material(shader)));
   }
 
-  initLineGenerator(shader: Shader) {
+  initLineGenerator() {
+    const shader = new Shader(LineVS, LineFS);
     const lineGenerator = new LineGenerator(shader, this.camera);
     const raycaster = new Raycast();
 
@@ -65,7 +67,25 @@ export class SceneManager {
       intersections.sort((a, b) => a.distance - b.distance);
 
       const { intersectionPoint, normal } = intersections[0];
-      lineGenerator.createLine(intersectionPoint, normal);
+      lineGenerator.createLine(intersectionPoint);
+    });
+
+    window.addEventListener("mousemove", ({ clientX, clientY }) => {
+      const intersections = raycaster.raycast(
+        normalizeMouseCoords(clientX, clientY),
+        this.scene.renderableObjects,
+        this.camera
+      );
+
+      if (!intersections.length) {
+        return;
+      }
+
+      intersections.sort((a, b) => a.distance - b.distance);
+
+      const { intersectionPoint, normal } = intersections[0];
+
+      lineGenerator.updateLine(intersectionPoint);
     });
   }
 }

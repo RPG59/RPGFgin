@@ -184,7 +184,7 @@ export class ObjLoader {
     return this.objects[this.objects.length - 1];
   }
 
-  load(): Promise<void> {
+  loadMtl(): Promise<void> {
     return new Promise((res) => {
       const files = this.mtllib.map((mtlPath) =>
         new FileLoader(mtlPath, "text").load()
