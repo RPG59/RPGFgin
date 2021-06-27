@@ -30,12 +30,15 @@ export class Mesh {
 
   constructor(
     public vertices: Float32Array,
-    public indices: Uint16Array,
+    public indices: Uint32Array,
     public texCoords: Float32Array = new Float32Array([]),
     public normals: Float32Array = new Float32Array([]),
     textures: Texture[] = [],
     private position: vec3 = new vec3()
   ) {
+    console.log(this.indices.length);
+    console.log(this.indices[this.indices.length - 1]);
+
     this.uuid = uuidv4();
     this.textures = textures;
     this.numIndices = indices.length;
@@ -87,7 +90,7 @@ export class Mesh {
     });
 
     gl.bindVertexArray(this.VAO);
-    gl.drawElements(renderMode, this.numIndices, gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(renderMode, this.numIndices, gl.UNSIGNED_INT, 0);
     gl.activeTexture(gl.TEXTURE0);
   }
 }

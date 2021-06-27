@@ -5,12 +5,14 @@ import { gl } from "../../RPGFgin/src/main";
 import { Camera } from "../../RPGFgin/src/core/camera";
 import { Mesh } from "../../RPGFgin/src/core/mesh";
 import { vec3 } from "../../RPGFgin/src/math/vec3";
+import { LineMesh } from "./lineMesh";
 
 export class LineGenerator extends RenderableObject {
   camera: Camera;
+  meshes: LineMesh[];
 
   constructor(shader: Shader, camera: Camera) {
-    super([], new Material(shader, gl.LINES));
+    super([], new Material(shader, gl.TRIANGLES));
     this.camera = camera;
   }
 
@@ -20,18 +22,10 @@ export class LineGenerator extends RenderableObject {
     }
 
     const index = this.meshes.length - 1;
-    const vertices = new Float32Array([
-      ...this.meshes[index].vertices.slice(0, 3),
-      intersectionPoint.x,
-      intersectionPoint.y,
-      intersectionPoint.z,
-    ]);
-
-    this.meshes[index].VBO.updateBufferData(vertices);
+    this.meshes[index].endPoint = intersectionPoint;
   }
 
   render() {
-    // this.updateModelMatrix(mesh);
     const shader = this.material.getShader();
 
     this.meshes.forEach((mesh) => {
@@ -41,10 +35,11 @@ export class LineGenerator extends RenderableObject {
   }
 
   createLine(point: vec3) {
-    const mesh = new Mesh(
-      new Float32Array([point.x, point.y, point.z, point.x, point.y, point.z]),
-      new Uint16Array([0, 1])
-    );
+    // const mesh = new Mesh(
+    //   new Float32Array([point.x, point.y, point.z, point.x, point.y, point.z]),
+    //   new Uint32Array([0, 1])
+    // );
+    const mesh = new LineMesh(point);
 
     mesh.allowIntersections = false;
 

@@ -1,6 +1,10 @@
 export class vec3 {
   constructor(public x = 0, public y = 0, public z = 0) {}
 
+  toArray(): number[] {
+    return [this.x, this.y, this.z];
+  }
+
   static mulScalar(v1: vec3, scalar: number): vec3 {
     return new vec3(v1.x * scalar, v1.y * scalar, v1.z * scalar);
   }
