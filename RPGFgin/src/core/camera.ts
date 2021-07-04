@@ -1,16 +1,6 @@
-import {
-  lookAt,
-  vec3,
-  length,
-  perspective,
-  mat4,
-  sub,
-  mul,
-  add,
-  radians,
-  cross,
-  normalize,
-} from "glm-js";
+import { mat4 } from "../math/mat4";
+import { vec3 } from "../math/vec3";
+import { radians } from "glm-js";
 
 const MOUSE_SENSITIVITY = 0.1;
 const KEYBOARD_OFFSET_PER_FRAME = 1;
@@ -42,12 +32,12 @@ export class Camera {
     this.updateProjMatrix();
   }
 
-  getViewMatrix(): mat4 {
-    return lookAt(this.position, new vec3(), this.up);
+  getViewMatrix() {
+    return mat4.lookAt(this.position, new vec3(), this.up);
   }
 
   updateProjMatrix(): void {
-    this.projMatrix = new perspective(
+    this.projMatrix = mat4.perspective(
       this.verticalFowRad,
       this.aspectRatio,
       this.nearClip,
@@ -55,7 +45,7 @@ export class Camera {
     );
   }
 
-  getProjectionMatrix(): mat4 {
+  getProjectionMatrix() {
     return this.projMatrix;
   }
 
@@ -76,33 +66,33 @@ export class Camera {
 
   move(direction: CAMERA_MOVEMENT): void {
     if (direction === CAMERA_MOVEMENT.BACKWARD) {
-      this.position = sub(
+      this.position = vec3.sub(
         this.position,
-        mul(this.front, KEYBOARD_OFFSET_PER_FRAME)
+        vec3.mulScalar(this.front, KEYBOARD_OFFSET_PER_FRAME)
       );
     }
     if (direction === CAMERA_MOVEMENT.FORWARD) {
-      this.position = add(
+      this.position = vec3.add(
         this.position,
-        mul(this.front, KEYBOARD_OFFSET_PER_FRAME)
+        vec3.mulScalar(this.front, KEYBOARD_OFFSET_PER_FRAME)
       );
     }
     if (direction === CAMERA_MOVEMENT.LEFT) {
-      this.position = sub(
+      this.position = vec3.sub(
         this.position,
-        mul(this.right, KEYBOARD_OFFSET_PER_FRAME)
+        vec3.mulScalar(this.right, KEYBOARD_OFFSET_PER_FRAME)
       );
     }
     if (direction === CAMERA_MOVEMENT.RIGHT) {
-      this.position = add(
+      this.position = vec3.add(
         this.position,
-        mul(this.right, KEYBOARD_OFFSET_PER_FRAME)
+        vec3.mulScalar(this.right, KEYBOARD_OFFSET_PER_FRAME)
       );
     }
   }
 
   updateVectors(): void {
-    this.front = normalize(
+    this.front = vec3.normalize(
       new vec3(
         -Math.sin(radians(this.yaw)) * Math.cos(radians(this.pinch)),
         Math.sin(radians(this.pinch)),
@@ -110,8 +100,8 @@ export class Camera {
       )
     );
 
-    this.right = cross(this.front, new vec3(0, 1, 0));
-    const len = length(this.position);
+    this.right = vec3.cross(this.front, new vec3(0, 1, 0));
+    const len = vec3.len(this.position);
     const yawRad = radians(this.yaw);
     const pinchRad = radians(this.pinch);
     this.position.x = -len * Math.sin(yawRad) * Math.cos(pinchRad);

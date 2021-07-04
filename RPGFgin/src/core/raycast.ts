@@ -10,10 +10,6 @@ export class Raycast {
   private rayDirection: any;
 
   raycast(coords: vec2, objects: RenderableObject[], camera: Camera) {
-    const inverseView = inverse(camera.getViewMatrix());
-    const inverseProjection = inverse(camera.getProjectionMatrix());
-    const world = mul(camera.getViewMatrix(), camera.getProjectionMatrix());
-
     this.rayOrigin = new vec3(
       camera.position.x,
       camera.position.y,
@@ -21,10 +17,13 @@ export class Raycast {
     );
 
     this.rayDirection = new vec4(coords.x, coords.y, -1, 1);
-    this.rayDirection = mul(inverseProjection, this.rayDirection);
+    this.rayDirection = mul(
+      inverse(camera.getProjectionMatrix()),
+      this.rayDirection
+    );
     this.rayDirection.z = -1;
     this.rayDirection.w = 0;
-    this.rayDirection = mul(inverseView, this.rayDirection);
+    this.rayDirection = mul(inverse(camera.getViewMatrix()), this.rayDirection);
     this.rayDirection = vec3.add(
       this.rayOrigin,
       vec3.mulScalar(

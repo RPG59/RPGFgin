@@ -16,6 +16,7 @@ import { Shader } from "../../RPGFgin/src/core/shader";
 import { ObjLoader } from "../../RPGFgin/src/loaders/objLoader";
 import { normalizeMouseCoords } from "../../RPGFgin/src/utils/convert";
 import { LineGenerator } from "./lineGenerator";
+import { vec3 } from "../../RPGFgin/src/math/vec3";
 
 export class SceneManager {
   scene: Scene;
@@ -34,7 +35,7 @@ export class SceneManager {
   }
 
   async loadWorldGeometry(shader: Shader) {
-    const objTextData = await fetch("foobar.obj").then((x) => x.text());
+    const objTextData = await fetch("untitled.obj").then((x) => x.text());
     const loader = new ObjLoader(objTextData);
 
     const meshes = await loader.getMeshes();
@@ -67,7 +68,9 @@ export class SceneManager {
       intersections.sort((a, b) => a.distance - b.distance);
 
       const { intersectionPoint, normal } = intersections[0];
-      lineGenerator.createLine(intersectionPoint);
+      lineGenerator.createLine(
+        vec3.add(intersectionPoint, vec3.mulScalar(normal, 0.01))
+      );
     });
 
     window.addEventListener("mousemove", ({ clientX, clientY }) => {
@@ -85,7 +88,9 @@ export class SceneManager {
 
       const { intersectionPoint, normal } = intersections[0];
 
-      lineGenerator.updateLine(intersectionPoint);
+      lineGenerator.updateLine(
+        vec3.add(intersectionPoint, vec3.mulScalar(normal, 0.01))
+      );
     });
   }
 }

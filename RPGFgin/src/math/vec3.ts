@@ -9,6 +9,10 @@ export class vec3 {
     return new vec3(v1.x * scalar, v1.y * scalar, v1.z * scalar);
   }
 
+  static addScalar(v1: vec3, scalar: number): vec3 {
+    return new vec3(v1.x + scalar, v1.y + scalar, v1.z + scalar);
+  }
+
   static divScalar(v1: vec3, scalar: number): vec3 {
     return new vec3(v1.x / scalar, v1.y / scalar, v1.z / scalar);
   }
