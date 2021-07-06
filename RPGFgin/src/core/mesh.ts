@@ -3,10 +3,10 @@ import { v4 as uuidv4 } from "uuid";
 import { gl } from "../main";
 import { StaticVerticesBuffer } from "./staticVerticesBuffer";
 import { StaticIndexBuffer } from "./staticIndexBuffer";
-import { Texture } from "./texture";
 import { mat4, vec3 } from "glm-js";
 import { Shader } from "./shader";
 import { Renderer } from "./renderer";
+import { ITexture } from "../types/ITexture";
 
 export const VERTEX_SIZE = 32;
 
@@ -15,10 +15,11 @@ export enum TEXTURE_TYPES {
   SPECULAR = "texture_specular",
   NORMAL = "texture_normal",
   HEIGHT = "texture_height",
+  CUBE = "cube",
 }
 
 export class Mesh {
-  textures: Texture[];
+  textures: ITexture[];
   numIndices: number;
   VAO: WebGLVertexArrayObject;
   VBO: StaticVerticesBuffer;
@@ -27,18 +28,16 @@ export class Mesh {
   EBO: StaticIndexBuffer;
   allowIntersections: boolean = true;
   uuid: string;
+  modelMatrix = new mat4();
 
   constructor(
     public vertices: Float32Array,
     public indices: Uint32Array,
     public texCoords: Float32Array = new Float32Array([]),
     public normals: Float32Array = new Float32Array([]),
-    textures: Texture[] = [],
+    textures: ITexture[] = [],
     private position: vec3 = new vec3()
   ) {
-    console.log(this.indices.length);
-    console.log(this.indices[this.indices.length - 1]);
-
     this.uuid = uuidv4();
     this.textures = textures;
     this.numIndices = indices.length;
@@ -69,14 +68,12 @@ export class Mesh {
     gl.bindVertexArray(null);
   }
 
-  getTextures(): Texture[] {
+  getTextures(): ITexture[] {
     return this.textures;
   }
 
   getModelMatrix(): mat4 {
-    // TODO: fix this
-    // return new mat4().translate(this.position);
-    return new mat4();
+    return this.modelMatrix;
   }
 
   render(shader: Shader, renderMode: number): void {
@@ -84,10 +81,10 @@ export class Mesh {
       return;
     }
 
-    this.textures.forEach((texture, i) => {
-      shader.setUniform1i("mainSampler", i);
-      gl.bindTexture(gl.TEXTURE_2D, texture.id);
-    });
+    // this.textures.forEach((texture, i) => {
+    //   shader.setUniform1i("mainSampler", i);
+    //   gl.bindTexture(gl.TEXTURE_2D, texture.id);
+    // });
 
     gl.bindVertexArray(this.VAO);
     gl.drawElements(renderMode, this.numIndices, gl.UNSIGNED_INT, 0);

@@ -10,11 +10,8 @@ export class Raycast {
   private rayDirection: any;
 
   raycast(coords: vec2, objects: RenderableObject[], camera: Camera) {
-    this.rayOrigin = new vec3(
-      camera.position.x,
-      camera.position.y,
-      camera.position.z
-    );
+    const rayLength = 200;
+    this.rayOrigin = camera.position.clone();
 
     this.rayDirection = new vec4(coords.x, coords.y, -1, 1);
     this.rayDirection = mul(
@@ -34,7 +31,7 @@ export class Raycast {
             this.rayDirection.z
           )
         ),
-        200
+        rayLength
       )
     );
 

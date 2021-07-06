@@ -5,6 +5,10 @@ export class vec3 {
     return [this.x, this.y, this.z];
   }
 
+  clone(): vec3 {
+    return new vec3(this.x, this.y, this.z);
+  }
+
   static mulScalar(v1: vec3, scalar: number): vec3 {
     return new vec3(v1.x * scalar, v1.y * scalar, v1.z * scalar);
   }

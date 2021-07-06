@@ -17,6 +17,8 @@ import { ObjLoader } from "../../RPGFgin/src/loaders/objLoader";
 import { normalizeMouseCoords } from "../../RPGFgin/src/utils/convert";
 import { LineGenerator } from "./lineGenerator";
 import { vec3 } from "../../RPGFgin/src/math/vec3";
+import { CubeMapObject } from "./cubeMapObject";
+import { CubeTexture } from "../../RPGFgin/src/core/cubeTexture";
 
 export class SceneManager {
   scene: Scene;
@@ -32,6 +34,7 @@ export class SceneManager {
 
     await this.loadWorldGeometry(defaultShader);
     this.initLineGenerator();
+    await this.initEnvironmentMap();
   }
 
   async loadWorldGeometry(shader: Shader) {
@@ -41,6 +44,12 @@ export class SceneManager {
     const meshes = await loader.getMeshes();
 
     this.scene.push(new RenderableObject(meshes, new Material(shader)));
+  }
+
+  async initEnvironmentMap() {
+    const cubeTexture = new CubeTexture();
+    await cubeTexture.loadCubeTexture();
+    this.scene.push(new CubeMapObject(cubeTexture));
   }
 
   initLineGenerator() {

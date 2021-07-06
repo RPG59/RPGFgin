@@ -211,8 +211,8 @@ export class ObjLoader {
       const indices = Array.from(Array(object.indices.length).keys());
 
       if (mtl && mtl.map_Ka) {
-        const texture = new Texture(mtl.map_Ka, TEXTURE_TYPES.DIFFUSE);
-        promises.push(texture.create());
+        const texture = new Texture(TEXTURE_TYPES.DIFFUSE);
+        promises.push(texture.create(mtl.map_Ka));
         textures.push(texture);
       }
 
