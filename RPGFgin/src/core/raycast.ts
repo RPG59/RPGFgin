@@ -9,7 +9,6 @@ export class Raycast {
   private rayDirection: any;
 
   raycast(coords: vec2, objects: RenderableObject[], camera: Camera) {
-    const rayLength = 200;
     this.rayOrigin = camera.position.clone();
 
     this.rayDirection = new vec4(coords.x, coords.y, -1, 1);
@@ -20,18 +19,8 @@ export class Raycast {
     this.rayDirection.z = -1;
     this.rayDirection.w = 0;
     this.rayDirection = mul(inverse(camera.getViewMatrix()), this.rayDirection);
-    this.rayDirection = vec3.add(
-      this.rayOrigin,
-      vec3.mulScalar(
-        vec3.normalize(
-          new vec3(
-            this.rayDirection.x,
-            this.rayDirection.y,
-            this.rayDirection.z
-          )
-        ),
-        rayLength
-      )
+    this.rayDirection = vec3.normalize(
+      new vec3(this.rayDirection.x, this.rayDirection.y, this.rayDirection.z)
     );
 
     return this.calculateIntersections(objects);
