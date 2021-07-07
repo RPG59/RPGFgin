@@ -1,7 +1,7 @@
 import { FileLoader } from "../loaders/fileLoader";
 import { gl } from "../main";
 import { ITexture } from "../types/ITexture";
-import { TEXTURE_TYPES } from "./mesh";
+import { TextureSlotsMap, TextureTypes } from "./mesh";
 
 export class CubeTexture implements ITexture {
   id: WebGLTexture;
@@ -10,7 +10,7 @@ export class CubeTexture implements ITexture {
   img: any;
 
   constructor() {
-    this.type = TEXTURE_TYPES.CUBE;
+    this.type = TextureTypes.CUBE;
   }
 
   async loadCubeTexture(): Promise<void> {
@@ -23,6 +23,7 @@ export class CubeTexture implements ITexture {
       "back.jpg",
     ];
     this.id = gl.createTexture();
+    gl.activeTexture(gl.TEXTURE0 + TextureSlotsMap[this.type]);
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, this.id);
 
     await Promise.all(

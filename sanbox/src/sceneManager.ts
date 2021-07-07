@@ -19,6 +19,9 @@ import { LineGenerator } from "./lineGenerator";
 import { vec3 } from "../../RPGFgin/src/math/vec3";
 import { CubeMapObject } from "./cubeMapObject";
 import { CubeTexture } from "../../RPGFgin/src/core/cubeTexture";
+import { Texture } from "../../RPGFgin/src/core/texture";
+import { TextureTypes } from "../../RPGFgin/src/core/mesh";
+import { gl } from "../../RPGFgin/src/main";
 
 export class SceneManager {
   scene: Scene;
@@ -40,8 +43,14 @@ export class SceneManager {
   async loadWorldGeometry(shader: Shader) {
     const objTextData = await fetch("untitled.obj").then((x) => x.text());
     const loader = new ObjLoader(objTextData);
+    await loader.loadMtl();
 
     const meshes = await loader.getMeshes();
+
+    // const texture = new Texture(TextureTypes.DIFFUSE);
+    // await texture.create("texture.jpg");
+
+    // meshes.forEach((mesh) => (mesh.textures = [texture]));
 
     this.scene.push(new RenderableObject(meshes, new Material(shader)));
   }

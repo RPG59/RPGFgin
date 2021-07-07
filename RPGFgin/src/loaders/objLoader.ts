@@ -1,4 +1,4 @@
-import { Mesh, TEXTURE_TYPES } from "../core/mesh";
+import { Mesh, TextureTypes } from "../core/mesh";
 import { FileLoader } from "./fileLoader";
 import { Material, MTLParser } from "./mtlParser";
 import { Texture } from "../core/texture";
@@ -68,8 +68,7 @@ export class ObjLoader {
               continue;
           }
         }
-        // case "usemtl":
-        case "usemtl":
+        case "u":
           this.parseUsemtl(line);
           continue;
         case "f":
@@ -211,7 +210,7 @@ export class ObjLoader {
       const indices = Array.from(Array(object.indices.length).keys());
 
       if (mtl && mtl.map_Ka) {
-        const texture = new Texture(TEXTURE_TYPES.DIFFUSE);
+        const texture = new Texture(TextureTypes.DIFFUSE);
         promises.push(texture.create(mtl.map_Ka));
         textures.push(texture);
       }

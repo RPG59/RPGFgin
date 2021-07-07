@@ -44,7 +44,9 @@ export class CubeMapObject extends RenderableObject {
       [texture]
     );
 
-    mesh.modelMatrix = glm.scale(glm.vec3(20, 20, 20));
+    mesh.allowIntersections = false;
+
+    mesh.modelMatrix = glm.scale(glm.vec3(50, 50, 50));
 
     super([mesh], new Material(new Shader(CubeVS, CubeFS)));
   }

@@ -1,6 +1,7 @@
 import { gl } from "../main";
 import { FileLoader } from "../loaders/fileLoader";
 import { ITexture } from "../types/ITexture";
+import { TextureSlotsMap } from "./mesh";
 
 export class Texture implements ITexture {
   id: WebGLTexture;
@@ -21,8 +22,7 @@ export class Texture implements ITexture {
         //@ts-ignore
         createImageBitmap(blob, { imageOrientation: "flipY" }).then(
           (bitmap) => {
-            // createImageBitmap(blob).then(bitmap => {
-            // this.img.onload = () => {
+            gl.activeTexture(gl.TEXTURE0 + TextureSlotsMap[this.type]);
             gl.bindTexture(gl.TEXTURE_2D, this.id);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
