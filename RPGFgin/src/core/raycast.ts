@@ -35,6 +35,10 @@ export class Raycast {
       for (; meshIndex < objects[rIndex].meshes.length; ++meshIndex) {
         const mesh = objects[rIndex].meshes[meshIndex];
 
+        if (!mesh.allowIntersections) {
+          continue;
+        }
+
         for (let i = 0; i < mesh.vertices.length; i += 9) {
           const { vertices } = mesh;
           const a = new vec3(vertices[i + 0], vertices[i + 1], vertices[i + 2]);
