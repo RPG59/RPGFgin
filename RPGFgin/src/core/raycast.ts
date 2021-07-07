@@ -1,9 +1,8 @@
 import { Camera } from "./camera";
 import { RenderableObject } from "./RenderableObject";
 import { inverse, mul, vec2, vec4, epsilon } from "glm-js";
-import { gl } from "../main";
 import { vec3 } from "../math/vec3";
-import { Renderer } from "./renderer";
+import { IIntersection } from "../types/IIntersection";
 
 export class Raycast {
   private rayOrigin: any;
@@ -35,17 +34,17 @@ export class Raycast {
       )
     );
 
+    return this.calculateIntersections(objects);
+  }
+
+  calculateIntersections(objects: RenderableObject[]): IIntersection[] {
     const intersections = [];
+    let rIndex = 0;
+    let meshIndex = 0;
 
-    objects.forEach((object) => {
-      if (object.material.renderMode === gl.LINES) {
-        return;
-      }
-
-      object.meshes.forEach((mesh) => {
-        if (!mesh.allowIntersections || !Renderer.activeMeshesMap[mesh.uuid]) {
-          return;
-        }
+    for (; rIndex < objects.length; ++rIndex) {
+      for (; meshIndex < objects[rIndex].meshes.length; ++meshIndex) {
+        const mesh = objects[rIndex].meshes[meshIndex];
 
         for (let i = 0; i < mesh.vertices.length; i += 9) {
           const { vertices } = mesh;
@@ -58,13 +57,13 @@ export class Raycast {
             intersections.push(intersection);
           }
         }
-      });
-    });
+      }
+    }
 
     return intersections;
   }
 
-  rayTriangleIntersection(v0, v1, v2) {
+  rayTriangleIntersection(v0, v1, v2): IIntersection {
     const edge0 = vec3.sub(v1, v0);
     const edge1 = vec3.sub(v2, v0);
     const N = vec3.normalize(vec3.cross(edge0, edge1));
