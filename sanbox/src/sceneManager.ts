@@ -43,14 +43,10 @@ export class SceneManager {
   async loadWorldGeometry(shader: Shader) {
     const objTextData = await fetch("untitled.obj").then((x) => x.text());
     const loader = new ObjLoader(objTextData);
+
     await loader.loadMtl();
 
     const meshes = await loader.getMeshes();
-
-    // const texture = new Texture(TextureTypes.DIFFUSE);
-    // await texture.create("texture.jpg");
-
-    // meshes.forEach((mesh) => (mesh.textures = [texture]));
 
     this.scene.push(new RenderableObject(meshes, new Material(shader)));
   }
@@ -91,7 +87,11 @@ export class SceneManager {
       );
     });
 
-    window.addEventListener("mousemove", ({ clientX, clientY }) => {
+    window.addEventListener("mousemove", ({ clientX, clientY, ctrlKey }) => {
+      if (!ctrlKey) {
+        return;
+      }
+
       const intersections = raycaster.raycast(
         normalizeMouseCoords(clientX, clientY),
         this.scene.renderableObjects,
