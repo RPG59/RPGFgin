@@ -3,11 +3,9 @@
 precision highp float;
 
 out vec4 fragColor;
-
-uniform vec3 u_startPoint;
-uniform vec3 u_endPoint;
+in vec3 v_pos;
 
 void main() {
-  fragColor = vec4(u_endPoint, 1.);
+  fragColor = vec4(v_pos, 1.);
 }
 

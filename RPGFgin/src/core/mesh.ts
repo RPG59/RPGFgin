@@ -81,7 +81,6 @@ export class Mesh {
 
     this.textures.forEach((texture) => {
       shader.setUniform1i("mainSampler", TextureSlotsMap[texture.type]);
-      gl.bindTexture(gl.TEXTURE_2D, texture.id);
     });
 
     gl.bindVertexArray(this.VAO);

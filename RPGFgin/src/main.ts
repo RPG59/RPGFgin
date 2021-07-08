@@ -20,8 +20,10 @@ function init(canvasEL: HTMLCanvasElement): void {
   if (context instanceof WebGL2RenderingContext) {
     gl = context;
 
+    const [, maxLineWidth] = gl.getParameter(gl.ALIASED_LINE_WIDTH_RANGE);
+
     gl.enable(gl.DEPTH_TEST);
-    gl.lineWidth(7);
+    gl.lineWidth(maxLineWidth);
   } else {
     throw new Error("WEBGL2 it not supported!");
   }
