@@ -11,12 +11,12 @@
   "author": "RPG59",
   "license": "MIT",
   "devDependencies": {
-    "file-loader": "^5.0.2",
-    "raw-loader": "^4.0.0",
-    "ts-loader": "^6.2.1",
+    "file-loader": "^6.2.0",
+    "raw-loader": "^4.0.2",
+    "ts-loader": "^9.4.2",
     "typescript": "^3.7.5",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^3.10.2"
   },
   "dependencies": {
