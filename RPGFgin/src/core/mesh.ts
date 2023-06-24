@@ -1,61 +1,53 @@
-import { gl } from "../main";
-import { StaticVerticesBuffer } from "./staticVerticesBuffer";
-import { StaticIndexBuffer } from "./staticIndexBuffer";
 import { Texture } from "./texture";
 import { float4x4 } from "../math/float4x4";
 import { float3 } from "../math/float3";
-
-export const VERTEX_SIZE = 32;
+import { GPUContext } from "../platform/webgpu/gpuContext";
 
 export enum TEXTURE_TYPES {
-    DIFFUSE = 'texture_diffuse',
-    SPECULAR = 'texture_specular',
-    NORMAL = 'texture_normal',
-    HEIGHT = 'texture_height'
+  DIFFUSE = "texture_diffuse",
+  SPECULAR = "texture_specular",
+  NORMAL = "texture_normal",
+  HEIGHT = "texture_height",
 }
 
 export class Mesh {
-    textures: Texture[];
-    numIndices: number;
-    VAO: WebGLVertexArrayObject;
-    VBO: StaticVerticesBuffer;
-    TBO: StaticVerticesBuffer;
-    EBO: StaticIndexBuffer;
+  hasLoaded = false;
+  vertexBuffer: GPUBuffer | undefined;
+  indexBuffer: GPUBuffer | undefined;
 
-    constructor(vertices: Float32Array,
-                texCoords: Float32Array,
-                indices: Uint16Array,
-                textures: Texture[],
-                private position: float3 = new float3()
-    ) {
-        this.textures = textures;
-        this.numIndices = indices.length;
+  constructor(
+    public name: string,
+    public vertices: Float32Array,
+    public indices: Uint16Array,
+    private texCoords: Float32Array = new Float32Array([]),
+    private textures: Texture[] = [],
+    private position: float3 = new float3()
+  ) {}
 
-        this.VAO = gl.createVertexArray();
-        gl.bindVertexArray(this.VAO);
-        this.VBO = new StaticVerticesBuffer(vertices);
+  getTextures(): Texture[] {
+    return this.textures;
+  }
 
-        gl.enableVertexAttribArray(0);
-        gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 0, null); // Positions
+  getModelMatrix(): float4x4 {
+    return new float4x4().translate(this.position);
+  }
 
-        this.TBO = new StaticVerticesBuffer(texCoords);
-        gl.enableVertexAttribArray(2);
-        gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 0, null);
+  uploadToGPU() {
+    this.vertexBuffer?.destroy();
+    this.indexBuffer?.destroy();
+    console.log(this.vertices);
 
-        this.EBO = new StaticIndexBuffer(indices);
-        // gl.enableVertexAttribArray(1);
-        // gl.vertexAttribPointer(1, 3, gl.FLOAT, false, VERTEX_SIZE, 4 * 3); // Normal
-        // gl.enableVertexAttribArray(2);
-        // gl.vertexAttribPointer(2, 2, gl.FLOAT, false, VERTEX_SIZE, 4 * 6); // TexCoord
+    this.vertexBuffer = GPUContext.getDevice().createBuffer({
+      size: this.vertices.byteLength,
+      usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+    });
 
-        gl.bindVertexArray(null);
-    }
+    this.indexBuffer = GPUContext.getDevice().createBuffer({
+      size: this.indices.byteLength,
+      usage: GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST,
+    });
 
-    getTextures(): Texture[] {
-        return this.textures;
-    }
-
-    getModelMatrix(): float4x4 {
-        return new float4x4().translate(this.position);
-    }
+    GPUContext.getDevice().queue.writeBuffer(this.vertexBuffer, 0, this.vertices, 0, this.vertices.length);
+    GPUContext.getDevice().queue.writeBuffer(this.indexBuffer, 0, this.indices, 0, this.indices.length);
+  }
 }

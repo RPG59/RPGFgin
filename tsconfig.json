@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "sourceMap": true
+    "target": "ESNext",
+    "sourceMap": true,
+    "typeRoots": ["./node_modules/@webgpu/types", "./node_modules/@types"]
   }
 }
-
