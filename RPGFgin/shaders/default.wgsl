@@ -9,7 +9,6 @@ struct Camera {
 }
 
 @binding(0) @group(0) var<uniform> camera: Camera;
-// @binding(2) @group(0) var<uniform> u_modelMatrix: u32;
 
 @vertex
 fn vtx_main(
@@ -25,10 +24,8 @@ fn vtx_main(
     vec2( 0.5, -0.5)
   );
 
-  // output.position = vec4f(pos[vertex_index], 0, 1);
-  output.color = vec4f(.5, 0, 0, 0);
-  output.position =  position * camera.projMatrix * camera.viewMatrix;
-  // output.position = position;
+  output.color = vec4f(position.z, 0, 0, 0);
+  output.position = camera.projMatrix * camera.viewMatrix * position;
 
 
   return output;

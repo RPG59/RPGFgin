@@ -26,7 +26,7 @@ export class GPUShader {
       },
       primitive: {
         topology: "triangle-list",
-        // cullMode: "front",
+        cullMode: "front",
       },
       depthStencil: {
         depthWriteEnabled: true,

@@ -21,7 +21,6 @@ import { float4x4 } from "../../RPGFgin/src/math/float4x4";
 import { Mesh } from "../../RPGFgin/src/core/mesh";
 import { Renderer } from "../../RPGFgin/src/core/renderer";
 
-// initWebGL("canvas3d");
 GPUContext.getInstance()
   .init("canvas3d")
   .then(() => {
@@ -29,10 +28,7 @@ GPUContext.getInstance()
       .then((x) => x.text())
       .then(async (x) => {
         const loader = new ObjLoader(x);
-        // const shader = new Shader(VS, FS);
-
-        // const shader = new GPUShader(GPUShaderData);
-        const camera = new Camera(Math.PI / 4, window.innerWidth / window.innerHeight, 1, 100, new float3(0, 0, 10));
+        const camera = new Camera(Math.PI / 4, window.innerWidth / window.innerHeight, 0.1, 100, new float3(0, 0, 10));
         const userEvents = new UserEvents();
         const control = new CameraInputControl(camera, userEvents);
 
@@ -81,47 +77,30 @@ GPUContext.getInstance()
           ],
         };
 
-        // console.log(uniformBufferData);
-        // const vtx = new Float32Array([0.0, 0.5, -0.5, -0.5, 0.5, -0]);
-        // const idx = new Uint16Array([1, 2, 3, 4]);
-        // const mesh = new Mesh("test", vtx, idx);
-        // mesh.uploadToGPU();
-        // passEncoder.setVertexBuffer(0, mesh.vertexBuffer);
-        // passEncoder.draw(3);
-
         meshes.forEach((mesh) => mesh.uploadToGPU());
 
         const scene = new Scene([new RenderableObject(meshes, new Material(shader))]);
         const renderer = new Renderer(camera, scene);
 
+        const depthTexture = GPUContext.getDevice().createTexture({
+          size: [window.innerWidth, window.innerHeight],
+          format: "depth24plus",
+          usage: GPUTextureUsage.RENDER_ATTACHMENT,
+        });
+
         function mainLoop() {
           const canvasTexture = GPUContext.getContext().getCurrentTexture();
           renderPassDescriptor.colorAttachments[0].view = canvasTexture.createView();
-          const depthTexture = GPUContext.getDevice().createTexture({
-            size: [canvasTexture.width, canvasTexture.height],
-            format: "depth24plus",
-            usage: GPUTextureUsage.RENDER_ATTACHMENT,
-          });
 
           renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
 
           const commandEncoder = GPUContext.getDevice().createCommandEncoder();
           const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-          const uniformBufferData = new Float32Array(32);
-
-          uniformBufferData.set(camera.getProjectionMatrix().elements);
-          uniformBufferData.set(camera.getViewMatrix().elements, 16);
 
           passEncoder.setPipeline(shader.getPipeline());
           control.update();
 
           renderer.render(passEncoder);
-
-          // meshes.forEach((mesh) => {
-          //   passEncoder.setVertexBuffer(0, mesh.vertexBuffer);
-          //   passEncoder.setIndexBuffer(mesh.indexBuffer, "uint16", 0, mesh.indices.length);
-          //   passEncoder.drawIndexed(mesh.indices.length / 3, 1, 0, 0, 0);
-          // });
 
           passEncoder.end();
           GPUContext.getDevice().queue.submit([commandEncoder.finish()]);
@@ -131,5 +110,3 @@ GPUContext.getInstance()
         mainLoop();
       });
   });
-
-// fetch('textured_output.obj').then(x => x.text()).then(x => {

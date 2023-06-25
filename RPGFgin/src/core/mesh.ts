@@ -35,7 +35,6 @@ export class Mesh {
   uploadToGPU() {
     this.vertexBuffer?.destroy();
     this.indexBuffer?.destroy();
-    console.log(this.vertices);
 
     this.vertexBuffer = GPUContext.getDevice().createBuffer({
       size: this.vertices.byteLength,
