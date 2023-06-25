@@ -1,11 +1,9 @@
-import { Shader } from "./shader";
+import { GPUShader } from "../platform/webgpu/gpuShader";
 
 export class Material {
+  constructor(private shader: GPUShader) {}
 
-    constructor(private shader: Shader) {
-    }
-
-    getShader(): Shader {
-        return this.shader;
-    }
+  getShader(): GPUShader {
+    return this.shader;
+  }
 }

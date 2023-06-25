@@ -9,7 +9,6 @@ import GPUShaderData from "../../RPGFgin/shaders/default.wgsl";
 import { ObjLoader } from "../../RPGFgin/src/loaders/objLoader";
 import { Camera } from "../../RPGFgin/src/core/camera";
 import { CameraInputControl } from "../../RPGFgin/src/core/cameraInputControl";
-// import { Renderer } from "../../RPGFgin/src/core/renderer";
 import { float3 } from "../../RPGFgin/src/math/float3";
 import { Scene } from "../../RPGFgin/src/core/scene";
 import { RenderableObject } from "../../RPGFgin/src/core/RenderableObject";
@@ -20,6 +19,7 @@ import { GPUContext } from "../../RPGFgin/src/platform/webgpu/gpuContext";
 import { GPUShader } from "../../RPGFgin/src/platform/webgpu/gpuShader";
 import { float4x4 } from "../../RPGFgin/src/math/float4x4";
 import { Mesh } from "../../RPGFgin/src/core/mesh";
+import { Renderer } from "../../RPGFgin/src/core/renderer";
 
 // initWebGL("canvas3d");
 GPUContext.getInstance()
@@ -32,19 +32,11 @@ GPUContext.getInstance()
         // const shader = new Shader(VS, FS);
 
         // const shader = new GPUShader(GPUShaderData);
-        const camera = new Camera(Math.PI / 4, window.innerWidth / window.innerHeight, 0.1, 100, new float3(0, 0, 10));
+        const camera = new Camera(Math.PI / 4, window.innerWidth / window.innerHeight, 1, 100, new float3(0, 0, 10));
         const userEvents = new UserEvents();
         const control = new CameraInputControl(camera, userEvents);
-        const defaultShader = GPUContext.getDevice().createShaderModule({
-          code: GPUShaderData,
-        });
 
         await loader.load();
-
-        const uniformBuffer = GPUContext.getDevice().createBuffer({
-          size: camera.getProjectionMatrix().elements.byteLength + camera.getViewMatrix().elements.byteLength,
-          usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-        });
 
         const vertexBuffers: GPUVertexBufferLayout[] = [
           {
@@ -69,33 +61,16 @@ GPUContext.getInstance()
             stepMode: "vertex",
           },
         ];
-
+        const shader = new GPUShader(GPUShaderData, vertexBuffers);
         const meshes = await loader.getMeshes();
-        const pipelineDescriptor: GPURenderPipelineDescriptor = {
-          vertex: {
-            module: defaultShader,
-            entryPoint: "vtx_main",
-            buffers: vertexBuffers,
-          },
-          fragment: {
-            module: defaultShader,
-            entryPoint: "frag_main",
-            targets: [
-              {
-                format: navigator.gpu.getPreferredCanvasFormat(),
-              },
-            ],
-          },
-          primitive: {
-            topology: "triangle-list",
-          },
-          layout: "auto",
-        };
-
-        const renderPipeline = GPUContext.getDevice().createRenderPipeline(pipelineDescriptor);
-        const commandEncoder = GPUContext.getDevice().createCommandEncoder();
         const clearColor = { r: 1, g: 1, b: 1, a: 1 };
         const renderPassDescriptor: GPURenderPassDescriptor = {
+          depthStencilAttachment: {
+            view: null,
+            depthClearValue: 1,
+            depthLoadOp: "clear",
+            depthStoreOp: "store",
+          },
           colorAttachments: [
             {
               clearValue: clearColor,
@@ -106,22 +81,6 @@ GPUContext.getInstance()
           ],
         };
 
-        const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-        const bindGroup = GPUContext.getDevice().createBindGroup({
-          layout: renderPipeline.getBindGroupLayout(0),
-          entries: [{ binding: 0, resource: { buffer: uniformBuffer } }],
-        });
-
-        const uniformBufferData = new Float32Array(32);
-        uniformBufferData.set(camera.getProjectionMatrix().elements);
-        uniformBufferData.set(camera.getViewMatrix().elements, 16);
-        console.log(uniformBufferData);
-
-        GPUContext.getDevice().queue.writeBuffer(uniformBuffer, 0, uniformBufferData);
-
-        passEncoder.setPipeline(renderPipeline);
-
-        // passEncoder.setBindGroup(0, bindGroup);
         // console.log(uniformBufferData);
         // const vtx = new Float32Array([0.0, 0.5, -0.5, -0.5, 0.5, -0]);
         // const idx = new Uint16Array([1, 2, 3, 4]);
@@ -132,24 +91,43 @@ GPUContext.getInstance()
 
         meshes.forEach((mesh) => mesh.uploadToGPU());
 
-        // const scene = new Scene([new RenderableObject(meshes, new Material(shader))]);
-        // const renderer = new Renderer(camera, scene);
+        const scene = new Scene([new RenderableObject(meshes, new Material(shader))]);
+        const renderer = new Renderer(camera, scene);
 
         function mainLoop() {
+          const canvasTexture = GPUContext.getContext().getCurrentTexture();
+          renderPassDescriptor.colorAttachments[0].view = canvasTexture.createView();
+          const depthTexture = GPUContext.getDevice().createTexture({
+            size: [canvasTexture.width, canvasTexture.height],
+            format: "depth24plus",
+            usage: GPUTextureUsage.RENDER_ATTACHMENT,
+          });
+
+          renderPassDescriptor.depthStencilAttachment.view = depthTexture.createView();
+
+          const commandEncoder = GPUContext.getDevice().createCommandEncoder();
+          const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+          const uniformBufferData = new Float32Array(32);
+
+          uniformBufferData.set(camera.getProjectionMatrix().elements);
+          uniformBufferData.set(camera.getViewMatrix().elements, 16);
+
+          passEncoder.setPipeline(shader.getPipeline());
           control.update();
 
-          meshes.forEach((mesh) => {
-            passEncoder.setVertexBuffer(0, mesh.vertexBuffer);
-            passEncoder.setIndexBuffer(mesh.indexBuffer, "uint16", 0, mesh.indices.length);
-            passEncoder.drawIndexed(mesh.indices.length / 3, 1, 0, 0, 0);
-          });
+          renderer.render(passEncoder);
+
+          // meshes.forEach((mesh) => {
+          //   passEncoder.setVertexBuffer(0, mesh.vertexBuffer);
+          //   passEncoder.setIndexBuffer(mesh.indexBuffer, "uint16", 0, mesh.indices.length);
+          //   passEncoder.drawIndexed(mesh.indices.length / 3, 1, 0, 0, 0);
+          // });
 
           passEncoder.end();
           GPUContext.getDevice().queue.submit([commandEncoder.finish()]);
 
           requestAnimationFrame(mainLoop);
         }
-
         mainLoop();
       });
   });

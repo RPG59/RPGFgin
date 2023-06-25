@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "sourceMap": true,
-    "typeRoots": ["./node_modules/@webgpu/types", "./node_modules/@types"]
+    "typeRoots": ["./node_modules/@webgpu/types", "./node_modules/@types"],
+    "moduleResolution": "Node"
   }
 }

@@ -27,7 +27,7 @@ fn vtx_main(
 
   // output.position = vec4f(pos[vertex_index], 0, 1);
   output.color = vec4f(.5, 0, 0, 0);
-  output.position = vec4f(position.xyz, 1);
+  output.position =  position * camera.projMatrix * camera.viewMatrix;
   // output.position = position;
 
 
