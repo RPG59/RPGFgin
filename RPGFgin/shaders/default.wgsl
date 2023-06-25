@@ -13,18 +13,12 @@ struct Camera {
 @vertex
 fn vtx_main(
     @builtin(vertex_index) vertex_index: u32,
-    @location(0) position: vec4f
-    // @location(1) normals: vec3f,
-    // @location(2) texCoords: vec2f
+    @location(0) position: vec4f,
+    @location(1) texCoords: vec2f
   ) -> VertexOut {
   var output: VertexOut;
-  const pos = array(
-    vec2( 0.0,  0.5),
-    vec2(-0.5, -0.5),
-    vec2( 0.5, -0.5)
-  );
 
-  output.color = vec4f(position.z, 0, 0, 0);
+  output.color = vec4f(position.z, texCoords.x, texCoords.y, 0);
   output.position = camera.projMatrix * camera.viewMatrix * position;
 
 

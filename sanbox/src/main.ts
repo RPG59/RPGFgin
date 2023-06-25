@@ -42,18 +42,13 @@ GPUContext.getInstance()
                 offset: 0,
                 format: "float32x3",
               },
-              // {
-              //   shaderLocation: 1, // normals
-              //   offset: 0,
-              //   format: "float32x3",
-              // },
-              // {
-              //   shaderLocation: 2, // uv
-              //   offset: 0,
-              //   format: "float32x2",
-              // },
+              {
+                shaderLocation: 1, // uv
+                offset: 3 * 4,
+                format: "float32x2",
+              },
             ],
-            arrayStride: 12,
+            arrayStride: 3 * 4 + 2 * 4,
             stepMode: "vertex",
           },
         ];
