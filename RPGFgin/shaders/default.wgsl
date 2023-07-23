@@ -9,6 +9,8 @@ struct Camera {
 }
 
 @binding(0) @group(0) var<uniform> camera: Camera;
+@binding(1) @group(0) var default_sampler: sampler;
+@binding(0) @group(1) var default_texture: texture_2d<f32>;
 
 @vertex
 fn vtx_main(
@@ -18,14 +20,16 @@ fn vtx_main(
   ) -> VertexOut {
   var output: VertexOut;
 
-  output.color = vec4f(position.z, texCoords.x, texCoords.y, 0);
+  output.color = vec4f(texCoords, 0, 0);
+  // output.color = vec4f(position.z, texCoords.x, texCoords.y, 0);
   output.position = camera.projMatrix * camera.viewMatrix * position;
 
 
   return output;
 }
 
+
 @fragment
 fn frag_main(fragData: VertexOut) -> @location(0) vec4f {
-  return vec4(fragData.color.x, fragData.color.y, 0, 1);
+  return textureSample(default_texture, default_sampler, fragData.color.xy);
 }

@@ -1,10 +1,9 @@
-import { RenderableObject } from "./RenderableObject";
+import { Mesh } from "./mesh";
 
 export class Scene {
-    constructor(public renderableObjects: RenderableObject[] = []) {
-    }
+  constructor(public meshes: Mesh[] = []) {}
 
-    push(obj: RenderableObject) {
-        this.renderableObjects.push(obj);
-    }
+  push(obj: Mesh) {
+    this.meshes.push(obj);
+  }
 }

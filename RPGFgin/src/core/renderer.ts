@@ -32,10 +32,8 @@ export class Renderer {
       this.camera.updateVectors();
     });
 
-    this.scene.renderableObjects.forEach((renderableObject, i) => {
-      renderableObject.meshes.forEach(({ name }, meshIndex) => {
-        this.datGui.meshesFolder.add({ [name]: true }, [name]);
-      });
+    this.scene.meshes.forEach(({ name }) => {
+      this.datGui.meshesFolder.add({ [name]: true }, [name]);
     });
   }
 
@@ -50,13 +48,7 @@ export class Renderer {
     uniformBufferData.set(this.camera.getProjectionMatrix().elements);
     uniformBufferData.set(this.camera.getViewMatrix().elements, 16);
     GPUContext.getDevice().queue.writeBuffer(this.cameraUniformBuffer, 0, uniformBufferData);
-
-    const bindGroup = GPUContext.getDevice().createBindGroup({
-      layout: shader.getPipeline().getBindGroupLayout(0),
-      entries: [{ binding: 0, resource: { buffer: this.cameraUniformBuffer } }],
-    });
-
-    passEncoder.setBindGroup(0, bindGroup);
+    passEncoder.setBindGroup(0, shader.getBindGroup());
   }
 
   private renderMesh(shader: Shader, mesh: Mesh, passEncoder: GPURenderPassEncoder): void {
@@ -95,25 +87,27 @@ export class Renderer {
     // gl.drawElements(gl.TRIANGLES, mesh.numIndices, gl.UNSIGNED_SHORT, 0);
     // gl.activeTexture(gl.TEXTURE0);
 
+    const meshBindGroup = mesh.getBindGroup();
+
+    if (meshBindGroup) {
+      passEncoder.setBindGroup(1, mesh.getBindGroup());
+    }
+
     passEncoder.setVertexBuffer(0, mesh.vertexBuffer);
     passEncoder.setIndexBuffer(mesh.indexBuffer, "uint16", 0, mesh.indices.length);
     passEncoder.drawIndexed(mesh.indices.length / 3, 1, 0, 0, 0);
   }
 
-  render(passEncoder: GPURenderPassEncoder): void {
+  render(passEncoder: GPURenderPassEncoder, shader): void {
     this.updateGui();
 
-    this.scene.renderableObjects.forEach((renderableObject) => {
-      const shader = renderableObject.material.getShader();
+    this.updateCamera(shader, passEncoder);
 
-      this.updateCamera(shader, passEncoder);
-
-      renderableObject.meshes.forEach((mesh, i) => {
-        if (this.datGui.meshesFolder.__controllers[i].object[mesh.name]) {
-          // shader.setUniformMatrix4f("u_modelMatrix", mesh.getModelMatrix().elements);
-          this.renderMesh(shader, mesh, passEncoder);
-        }
-      });
+    this.scene.meshes.forEach((mesh, i) => {
+      if (this.datGui.meshesFolder.__controllers[i].object[mesh.name]) {
+        // shader.setUniformMatrix4f("u_modelMatrix", mesh.getModelMatrix().elements);
+        this.renderMesh(shader, mesh, passEncoder);
+      }
     });
   }
 }

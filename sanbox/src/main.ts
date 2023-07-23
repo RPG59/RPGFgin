@@ -54,6 +54,7 @@ GPUContext.getInstance()
         ];
         const shader = new GPUShader(GPUShaderData, vertexBuffers);
         const meshes = await loader.getMeshes();
+        meshes.forEach((mesh) => mesh.createBindGroup(shader.getPipeline().getBindGroupLayout(1)));
         const clearColor = { r: 1, g: 1, b: 1, a: 1 };
         const renderPassDescriptor: GPURenderPassDescriptor = {
           depthStencilAttachment: {
@@ -74,8 +75,16 @@ GPUContext.getInstance()
 
         meshes.forEach((mesh) => mesh.uploadToGPU());
 
-        const scene = new Scene([new RenderableObject(meshes, new Material(shader))]);
+        const scene = new Scene(meshes);
         const renderer = new Renderer(camera, scene);
+        const sampler = GPUContext.getDevice().createSampler({
+          minFilter: "linear",
+        });
+
+        shader.createBindGroup([
+          { binding: 0, resource: { buffer: renderer.cameraUniformBuffer } },
+          { binding: 1, resource: sampler },
+        ]);
 
         const depthTexture = GPUContext.getDevice().createTexture({
           size: [window.innerWidth, window.innerHeight],
@@ -95,7 +104,7 @@ GPUContext.getInstance()
           passEncoder.setPipeline(shader.getPipeline());
           control.update();
 
-          renderer.render(passEncoder);
+          renderer.render(passEncoder, shader);
 
           passEncoder.end();
           GPUContext.getDevice().queue.submit([commandEncoder.finish()]);

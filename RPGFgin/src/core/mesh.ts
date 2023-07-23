@@ -14,6 +14,7 @@ export class Mesh {
   hasLoaded = false;
   vertexBuffer: GPUBuffer | undefined;
   indexBuffer: GPUBuffer | undefined;
+  bindGroup: GPUBindGroup;
 
   constructor(
     public name: string,
@@ -23,6 +24,26 @@ export class Mesh {
     private textures: Texture[] = [],
     private position: float3 = new float3()
   ) {}
+
+  getBindGroup() {
+    return this.bindGroup;
+  }
+
+  createBindGroup(layout) {
+    if (!this.textures.length) {
+      return;
+    }
+
+    this.bindGroup = GPUContext.getDevice().createBindGroup({
+      layout,
+      entries: [
+        {
+          binding: 0,
+          resource: this.textures[0].getTexture().createView(),
+        },
+      ],
+    });
+  }
 
   getTextures(): Texture[] {
     return this.textures;
