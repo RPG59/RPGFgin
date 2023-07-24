@@ -9,8 +9,8 @@ struct Camera {
 }
 
 @binding(0) @group(0) var<uniform> camera: Camera;
-@binding(1) @group(0) var default_sampler: sampler;
 @binding(0) @group(1) var default_texture: texture_2d<f32>;
+@binding(1) @group(1) var default_sampler: sampler;
 
 @vertex
 fn vtx_main(

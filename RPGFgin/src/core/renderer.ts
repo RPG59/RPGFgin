@@ -87,15 +87,15 @@ export class Renderer {
     // gl.drawElements(gl.TRIANGLES, mesh.numIndices, gl.UNSIGNED_SHORT, 0);
     // gl.activeTexture(gl.TEXTURE0);
 
-    const meshBindGroup = mesh.getBindGroup();
+    // const meshBindGroup = mesh.getBindGroup();
 
-    if (meshBindGroup) {
-      passEncoder.setBindGroup(1, mesh.getBindGroup());
-    }
+    // if (meshBindGroup) {
+    //   passEncoder.setBindGroup(1, mesh.getBindGroup());
+    // }
 
-    passEncoder.setVertexBuffer(0, mesh.vertexBuffer);
-    passEncoder.setIndexBuffer(mesh.indexBuffer, "uint16", 0, mesh.indices.length);
-    passEncoder.drawIndexed(mesh.indices.length / 3, 1, 0, 0, 0);
+    // passEncoder.setVertexBuffer(0, mesh.vertexBuffer);
+    // passEncoder.setIndexBuffer(mesh.indexBuffer, "uint16", 0, mesh.indices.length);
+    // passEncoder.drawIndexed(mesh.indices.length / 3, 1, 0, 0, 0);
   }
 
   render(passEncoder: GPURenderPassEncoder, shader): void {

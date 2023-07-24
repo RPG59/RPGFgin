@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@webgpu/types": "0.1.33",
-    "dat.gui": "^0.7.7"
+    "dat.gui": "^0.7.7",
+    "nanoid": "4.0.2"
   }
 }
