@@ -1,28 +1,27 @@
-import * as dat from 'dat.gui';
+import * as dat from "dat.gui";
 
 export class DatGui {
-    gui;
-    cameraPinch;
-    cameraYaw;
-    meshesFolder;
+  gui;
 
+  cameraPinch;
 
-    constructor() {
-        this.gui = new dat.GUI();
+  cameraYaw;
 
-        this.initCameraGui();
-        this.initMeshesGui();
-    }
+  meshesFolder;
 
-    initCameraGui() {
-        const cameraFolder = this.gui.addFolder('camera');
-        this.cameraPinch = cameraFolder.add({pinch: 0}, 'pinch');
-        this.cameraYaw = cameraFolder.add({yaw: 0}, 'yaw');
-    }
+  constructor() {
+    this.gui = new dat.GUI();
+    this.initCameraGui();
+    this.initMeshesGui();
+  }
 
-    initMeshesGui() {
-        this.meshesFolder = this.gui.addFolder('meshes');
-    }
+  initCameraGui() {
+    const cameraFolder = this.gui.addFolder("camera");
+    this.cameraPinch = cameraFolder.add({ pinch: 0 }, "pinch");
+    this.cameraYaw = cameraFolder.add({ yaw: 0 }, "yaw");
+  }
+
+  initMeshesGui() {
+    this.meshesFolder = this.gui.addFolder("meshes");
+  }
 }
-
-

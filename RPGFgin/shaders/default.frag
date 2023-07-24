@@ -3,22 +3,22 @@
 precision lowp float;
 
 struct Material {
-     sampler2D texture_diffuse[5];
-     sampler2D texture_normal[5];
-     sampler2D texture_specular[5];
-     sampler2D texture_height[5];
+  sampler2D texture_diffuse[5];
+  sampler2D texture_normal[5];
+  sampler2D texture_specular[5];
+  sampler2D texture_height[5];
 };
 
 struct Light {
-    vec3 position;
+  vec3 position;
 
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+  vec3 ambient;
+  vec3 diffuse;
+  vec3 specular;
 
-    float constant;
-    float linear;
-    float quadratic;
+  float constant;
+  float linear;
+  float quadratic;
 };
 
 

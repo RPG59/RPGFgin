@@ -1,18 +1,18 @@
-import { gl } from "../main";
+import { gl } from "../platform/webgl/utils";
 
 export class StaticVerticesBuffer {
-    private id: WebGLBuffer;
-    constructor(data: ArrayBuffer) {
-        this.id = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.id);
-        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    }
+  private id: WebGLBuffer;
+  constructor(data: ArrayBuffer) {
+    this.id = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.id);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  }
 
-    bind(): void {
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.id);
-    }
+  bind(): void {
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.id);
+  }
 
-    unbind(): void {
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
-    }
+  unbind(): void {
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
+  }
 }
