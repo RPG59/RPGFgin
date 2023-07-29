@@ -8,6 +8,7 @@ export class CameraInputControl implements IControl {
   pointerOld: float2;
   delta: float2;
   isDrag: boolean = false;
+  mouseButton: number = 0;
 
   constructor(private camera: Camera, private userEvents: UserEvents) {
     this.pointer = new float2();
@@ -19,6 +20,7 @@ export class CameraInputControl implements IControl {
   onPointerDown(e) {
     this.isDrag = true;
     this.pointerOld.set(e.clientX, e.clientY);
+    this.mouseButton = e.button;
   }
 
   onPointerUp(e) {
@@ -33,7 +35,13 @@ export class CameraInputControl implements IControl {
 
     this.delta.set(e.clientX - this.pointerOld.x, e.clientY - this.pointerOld.y);
 
-    this.rotate();
+    if (this.mouseButton === 0) {
+      this.rotate();
+    }
+
+    if (this.mouseButton === 2) {
+      this.translate();
+    }
 
     this.pointerOld.set(e.clientX, e.clientY);
   }
@@ -42,18 +50,12 @@ export class CameraInputControl implements IControl {
     this.camera.rotate(this.delta.x, this.delta.y);
   }
 
+  translate() {
+    this.camera.translate(this.delta.x, this.delta.y);
+  }
+
   update() {
-    if (this.userEvents.keys["KeyW"]) {
-      this.camera.move(CAMERA_MOVEMENT.FORWARD);
-    }
-    if (this.userEvents.keys["KeyS"]) {
-      this.camera.move(CAMERA_MOVEMENT.BACKWARD);
-    }
-    if (this.userEvents.keys["KeyD"]) {
-      this.camera.move(CAMERA_MOVEMENT.LEFT);
-    }
-    if (this.userEvents.keys["KeyA"]) {
-      this.camera.move(CAMERA_MOVEMENT.RIGHT);
-    }
+    this.camera.move(CAMERA_MOVEMENT.FORWARD, this.userEvents.wheel);
+    this.userEvents.wheel = 0;
   }
 }

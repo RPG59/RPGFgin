@@ -21,25 +21,23 @@ export class Renderer {
   }
 
   private initGui(): void {
-    this.datGui = new DatGui();
-    this.datGui.cameraPinch.listen().onChange((e) => {
-      this.camera.pinch = e;
-      this.camera.updateVectors();
-    });
-
-    this.datGui.cameraYaw.listen().onChange((e) => {
-      this.camera.yaw = e;
-      this.camera.updateVectors();
-    });
-
-    this.scene.meshes.forEach(({ name }) => {
-      this.datGui.meshesFolder.add({ [name]: true }, [name]);
-    });
+    // this.datGui = new DatGui();
+    // this.datGui.cameraPinch.listen().onChange((e) => {
+    //   this.camera.pinchDeg = e;
+    // this.camera.updateVectors();
+    // });
+    // this.datGui.cameraYaw.listen().onChange((e) => {
+    //   this.camera.yawDeg = e;
+    // this.camera.updateVectors();
+    // });
+    // this.scene.meshes.forEach(({ name }) => {
+    //   this.datGui.meshesFolder.add({ [name]: true }, [name]);
+    // });
   }
 
   private updateGui(): void {
-    this.datGui.cameraPinch.setValue(this.camera.pinch);
-    this.datGui.cameraYaw.setValue(this.camera.yaw);
+    //   this.datGui.cameraPinch.setValue(this.camera.pinchDeg);
+    //   this.datGui.cameraYaw.setValue(this.camera.yawDeg);
   }
 
   private updateCamera(shader: GPUShader, passEncoder: GPURenderPassEncoder): void {
